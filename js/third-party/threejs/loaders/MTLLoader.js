@@ -338,7 +338,6 @@ THREE.MTLLoader.MaterialCreator.prototype = {
 
 		// Create material
 
-		var scope = this;
 		var mat = this.materialsInfo[ materialName ];
 		var params = {
 
@@ -359,22 +358,6 @@ THREE.MTLLoader.MaterialCreator.prototype = {
 
 			return baseUrl + url;
 		};
-		
-		function setMapForType ( mapType, value ) {
-
-			if ( params[ mapType ] ) return; // Keep the first encountered texture
-
-			var texParams = scope.getTextureParams( value, params );
-			var map = scope.loadTexture( resolveURL( scope.baseUrl, texParams.url ) );
-			
-			map.repeat.copy( texParams.scale );
-			map.offset.copy( texParams.offset );
-
-			map.wrapS = scope.wrap;
-			map.wrapT = scope.wrap;
-			
-			params[ mapType ] = map;
-		}
 
 		for ( var prop in mat ) {
 
@@ -405,24 +388,28 @@ THREE.MTLLoader.MaterialCreator.prototype = {
 
 					// Diffuse texture map
 
-					setMapForType( "map", value );
+					if ( params.map ) break; // Keep the first encountered texture
+
+					var texParams = this.getTextureParams( value, params );
+
+					params.map = this.loadTexture( resolveURL( this.baseUrl, texParams.url ) );
+					params.map.repeat.copy( texParams.scale );
+					params.map.offset.copy( texParams.offset );
+
+					params.map.wrapS = this.wrap;
+					params.map.wrapT = this.wrap;
 
 					break;
 
 				case 'map_ks':
 
 					// Specular map
-					
-					setMapForType( "specularMap", value );
 
-					break;
+					if ( params.specularMap ) break; // Keep the first encountered texture
 
-				case 'map_bump':
-				case 'bump':
-
-					// Bump texture map				
-					
-					setMapForType( "bumpMap", value );
+					params.specularMap = this.loadTexture( resolveURL( this.baseUrl, value ) );
+					params.specularMap.wrapS = this.wrap;
+					params.specularMap.wrapT = this.wrap;
 
 					break;
 
@@ -454,6 +441,24 @@ THREE.MTLLoader.MaterialCreator.prototype = {
 						params.transparent = true;
 
 					}
+
+					break;
+
+				case 'map_bump':
+				case 'bump':
+
+					// Bump texture map
+
+					if ( params.bumpMap ) break; // Keep the first encountered texture
+
+					var texParams = this.getTextureParams( value, params );					
+
+					params.bumpMap = this.loadTexture( resolveURL( this.baseUrl, texParams.url ) );
+					params.bumpMap.repeat.copy( texParams.scale );
+					params.bumpMap.offset.copy( texParams.offset );
+ 
+					params.bumpMap.wrapS = this.wrap;
+					params.bumpMap.wrapT = this.wrap;
 
 					break;
 
