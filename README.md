@@ -16,3 +16,9 @@ python -m SimpleHTTPServer
 # Python 3.x
 python -m http.server
 ```
+
+And once you commit your changes, and want to see them in Google Cardboard:
+
+[https://worlds.marpi.pl/](https://worlds.marpi.pl/)
+
+Good luck!
