@@ -1,6 +1,6 @@
 # [Building Virtual Reality Worlds using Three.js](http://grayarea.org/workshop/building-virtual-reality-worlds-using-threejs/)
 
-[https://worlds.marpi.pl/]![alt text](http://grayarea.org/wp-content/uploads/2016/06/marpi2.jpg "Building Virtual Reality Worlds using Three.js")
+[![alt text](http://grayarea.org/wp-content/uploads/2016/06/marpi2.jpg "Building Virtual Reality Worlds using Three.js")](https://worlds.marpi.pl/)
 
 ### How to run
 
