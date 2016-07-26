@@ -17,6 +17,9 @@
     <body>
 
         <script src="js/third-party/threejs/three.js"></script>
+        <script src="js/third-party/threejs/WebVR.js"></script>
+        <script src="js/third-party/threejs/effects/VREffect.js"></script>
+        <script src="js/third-party/threejs/controls/VRControls.js"></script>
         <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
         <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
         <script src="js/third-party/threejs/effects/StereoEffect.js"></script>
@@ -52,6 +55,14 @@
                 controls.autoRotate = true;
                 controls.enablePan = false;
 
+                if (WEBVR.isAvailable() === true) {
+                    controls = new THREE.VRControls(camera);
+                    controls.standing = false;
+
+                    renderer = new THREE.VREffect(renderer);
+                    document.body.appendChild(WEBVR.getButton(renderer));
+                }
+
                 // central object
                 var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
 
@@ -72,9 +83,9 @@
                         }
                     }
                 }
-                
+
                 // merge
-                
+
                 var geom = new THREE.Geometry()
                 for (var i = 0; i < group.children.length; i++) {
                     group.children[i].updateMatrix();
