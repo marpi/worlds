@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Workshop</title>
+        <title>VR Workshop</title>
         <meta charset="utf-8">
         <meta property="og:title" content="VR Workshop"/>
         <meta property="og:type" content="website"/>
@@ -28,8 +28,6 @@
             var camera, scene, renderer;
             var effect;
             var mobile = false;
-            var globe
-            var group
 
             init();
             animate();
@@ -41,7 +39,6 @@
                 renderer = new THREE.WebGLRenderer({antialias: true});
                 renderer.setPixelRatio(window.devicePixelRatio);
                 renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setClearColor(0)
                 document.body.appendChild(renderer.domElement);
 
                 scene = new THREE.Scene();
@@ -56,43 +53,15 @@
                 controls.enablePan = false;
 
                 // central object
+                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
 
-                var cubeMap = getCubeMap(1)
-
-                var material = new THREE.MeshPhongMaterial({side: THREE.DoubleSide, envMap: getCubeMap(1), color: 0xFFFFFF, shading: THREE.FlatShading});
-                var geometry = new THREE.SphereGeometry(2.6, 50, 50)//  30, 30)
-
-                var mod = .3;
-                for (var i = 0; i < geometry.vertices.length; i++) {
-                    var v = geometry.vertices[i]
-                    var ran = Math.random()
-                    v.x *= ran;
-                    v.y *= ran;
-                    v.z *= ran;
-                }
-                globe = new THREE.Mesh(geometry, material);
-                scene.add(globe);
-
-
-                // Background
-
-                var cubeShader = THREE.ShaderLib['cube'];
-                cubeShader.uniforms['tCube'].value = cubeMap;
-
-                var skyBoxMaterial = new THREE.ShaderMaterial({
-                    fragmentShader: cubeShader.fragmentShader,
-                    vertexShader: cubeShader.vertexShader,
-                    uniforms: cubeShader.uniforms,
-                    depthWrite: false,
-                    side: THREE.BackSide
-                });
-
-                var skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), skyBoxMaterial);
-                scene.add(skyBox);
+                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
+                var mesh = new THREE.Mesh(geometry, material);
+                scene.add(mesh);
 
                 // cubes
 
-                group = new THREE.Object3D();
+                var group = new THREE.Object3D();
                 for (var _x = -3; _x <= 3; _x++) {
                     for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
@@ -103,22 +72,14 @@
                         }
                     }
                 }
-
+                
                 // merge
-
+                
                 var geom = new THREE.Geometry()
                 for (var i = 0; i < group.children.length; i++) {
                     group.children[i].updateMatrix();
                     geom.merge(group.children[i].geometry, group.children[i].matrix);
                 }
-                var mod = .3;
-                for (var i = 0; i < geom.vertices.length; i++) {
-                    var v = geom.vertices[i]
-                    v.x += (Math.random() - .5) * mod
-                    v.y += (Math.random() - .5) * mod
-                    v.z += (Math.random() - .5) * mod
-                }
-
                 group = new THREE.Mesh(geom, material);
                 scene.add(group)
 
