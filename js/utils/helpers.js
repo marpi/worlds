@@ -9,24 +9,27 @@ function setOrientationControls(e) {
 
     window.removeEventListener('deviceorientation', setOrientationControls, true);
 
-    renderer.domElement.addEventListener('click', function () {
+    if (renderer.domElement) {
+        renderer.domElement.addEventListener('click', function () {
 
-        if (this.requestFullscreen) {
-            this.requestFullscreen();
-        } else if (this.msRequestFullscreen) {
-            this.msRequestFullscreen();
-        } else if (this.mozRequestFullScreen) {
-            this.mozRequestFullScreen();
-        } else if (this.webkitRequestFullscreen) {
-            this.webkitRequestFullscreen();
-        }
+            if (this.requestFullscreen) {
+                this.requestFullscreen();
+            } else if (this.msRequestFullscreen) {
+                this.msRequestFullscreen();
+            } else if (this.mozRequestFullScreen) {
+                this.mozRequestFullScreen();
+            } else if (this.webkitRequestFullscreen) {
+                this.webkitRequestFullscreen();
+            }
 
-    });
+        });
 
-    renderer = new THREE.StereoEffect(renderer);
-    renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer = new THREE.StereoEffect(renderer);
+        renderer.setSize(window.innerWidth, window.innerHeight);
 
-    mobile = true;
+        mobile = true;
+
+    }
 }
 
 function onWindowResize() {
@@ -59,8 +62,6 @@ function getCubeMap(i) {
 
     var loader = new THREE.ImageLoader();
     var pre = "assets/textures/";
-    if (user)
-        pre = "../../assets/textures/";
     var file = pre + envMaps[i].file;
     var size = envMaps[i].size;
     loader.load(file, function (image) {
@@ -92,13 +93,13 @@ function getCubeMap(i) {
 
 /*
  * 
-
-    var geom = new THREE.Geometry()
-    for (var i = 0; i < ship.children.length; i++) {
-        ship.children[i].updateMatrix();
-        geom.merge(ship.children[i].geometry, ship.children[i].matrix);
-    }
-    ship = new THREE.Mesh(geom, mat);
+ 
+ var geom = new THREE.Geometry()
+ for (var i = 0; i < container.children.length; i++) {
+ container.children[i].updateMatrix();
+ geom.merge(container.children[i].geometry, container.children[i].matrix);
+ }
+ container = new THREE.Mesh(geom, mat);
  
  * 
  */
@@ -106,20 +107,20 @@ function getCubeMap(i) {
 /*
  * 
  
-    var cubeShader = THREE.ShaderLib['cube'];
-    cubeShader.uniforms['tCube'].value = getCubeMap(10);
-
-    var skyBoxMaterial = new THREE.ShaderMaterial({
-        fragmentShader: cubeShader.fragmentShader,
-        vertexShader: cubeShader.vertexShader,
-        uniforms: cubeShader.uniforms,
-        depthWrite: false,
-        side: THREE.BackSide
-    });
-
-    var skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100),skyBoxMaterial);
-
-    scene.add(skyBox);
+ var cubeShader = THREE.ShaderLib['cube'];
+ cubeShader.uniforms['tCube'].value = getCubeMap(10);
+ 
+ var skyBoxMaterial = new THREE.ShaderMaterial({
+ fragmentShader: cubeShader.fragmentShader,
+ vertexShader: cubeShader.vertexShader,
+ uniforms: cubeShader.uniforms,
+ depthWrite: false,
+ side: THREE.BackSide
+ });
+ 
+ var skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100),skyBoxMaterial);
+ 
+ scene.add(skyBox);
  
  *  
  */
@@ -127,11 +128,11 @@ function getCubeMap(i) {
 /*
  * 
  
-    var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
-    hemiLight.color.setHSL( 0.6, 1, 0.6 );
-    hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
-    hemiLight.position.set( 0, 0, 0 );
-    scene.add( hemiLight );
+ var hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+ hemiLight.color.setHSL( 0.6, 1, 0.6 );
+ hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+ hemiLight.position.set( 0, 0, 0 );
+ scene.add( hemiLight );
  
  * 
  */
