@@ -75,6 +75,7 @@
             }
 
             function setup() {
+                
                 // central object
 
                 var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
@@ -111,10 +112,6 @@
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
-
-
-                var ambientLight = new THREE.AmbientLight(0x999999);
-                scene.add(ambientLight);
             }
 
             function render() {
