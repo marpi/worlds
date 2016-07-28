@@ -43,19 +43,19 @@
                 renderer.setPixelRatio(window.devicePixelRatio);
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 document.body.appendChild(renderer.domElement);
-                
+
                 // scene
 
                 scene = new THREE.Scene();
-                
+
                 // camera
 
                 camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
                 camera.position.set(0, 0, 3);
                 camera.focalLength = camera.position.distanceTo(scene.position);
-                
+
                 // controls
-                
+
                 controls = new THREE.OrbitControls(camera);
                 controls.autoRotate = true;
 
@@ -76,7 +76,7 @@
 
             function setup() {
                 // central object
-                
+
                 var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
                 var object = new THREE.Mesh(geometry, material);
@@ -111,6 +111,10 @@
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
+
+
+                var ambientLight = new THREE.AmbientLight(0x999999);
+                scene.add(ambientLight);
             }
 
             function render() {
