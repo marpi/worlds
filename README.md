@@ -5,6 +5,7 @@
 ### How to run
 
 In order to run the project you need a local server. You can use MAMP:
+
 [https://www.mamp.info/](https://www.mamp.info/)
 
 Or run Python's built-in http server.
