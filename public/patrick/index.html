@@ -20,10 +20,12 @@
         <script src="js/third-party/threejs/WebVR.js"></script>
         <script src="js/third-party/threejs/effects/VREffect.js"></script>
         <script src="js/third-party/threejs/effects/StereoEffect.js"></script>
-        
+
         <script src="js/third-party/threejs/controls/VRControls.js"></script>
         <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
         <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
+        
+        <script src="js/third-party/TweenMax.min.js"></script>
         
         <script src="js/utils/helpers.js"></script>
 
@@ -32,23 +34,30 @@
             var mobile = false;
 
             init();
-            animate();
+            setup();
+            render();
 
             function init() {
 
-                // setup
+                // renderer
 
                 renderer = new THREE.WebGLRenderer({antialias: true});
                 renderer.setPixelRatio(window.devicePixelRatio);
                 renderer.setSize(window.innerWidth, window.innerHeight);
                 document.body.appendChild(renderer.domElement);
 
+                // scene
+
                 scene = new THREE.Scene();
+
+                // camera
 
                 camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
                 camera.position.set(0, 0, 3);
                 camera.focalLength = camera.position.distanceTo(scene.position);
-                
+
+                // controls
+
                 controls = new THREE.OrbitControls(camera);
                 controls.autoRotate = true;
 
@@ -60,12 +69,21 @@
                     document.body.appendChild(WEBVR.getButton(renderer));
                 }
 
-                // central object
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
+                // events
 
+                window.addEventListener('deviceorientation', setOrientationControls, true);
+                window.addEventListener('resize', onWindowResize, false);
+
+            }
+
+            function setup() {
+                
+                // central object
+
+                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
-                var mesh = new THREE.Mesh(geometry, material);
-                scene.add(mesh);
+                var object = new THREE.Mesh(geometry, material);
+                scene.add(object);
 
                 // cubes
 
@@ -96,22 +114,10 @@
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
-
-                // events
-
-                window.addEventListener('deviceorientation', setOrientationControls, true);
-                window.addEventListener('resize', onWindowResize, false);
-
-            }
-
-            function animate() {
-
-                requestAnimationFrame(animate);
-                render();
-
             }
 
             function render() {
+                requestAnimationFrame(render);
 
                 controls.update();
 
