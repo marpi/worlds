@@ -35,6 +35,9 @@
             init();
             setup();
             render();
+            var cubes = []
+            var group
+
             function init() {
                 // renderer
                 renderer = new THREE.WebGLRenderer({antialias: true});
@@ -101,17 +104,19 @@
                             mesh.scale.x=1.0
                             mesh.scale.y=1.0
                             group.add(mesh);
+                            cubes.push(mesh)
                         }
                     }
                 }
+                scene.add(group)
                 // merge
-                var geom = new THREE.Geometry()
+                /*var geom = new THREE.Geometry()
                 for (var i = 0; i < group.children.length; i++) {
                     group.children[i].updateMatrix();
                     geom.merge(group.children[i].geometry, group.children[i].matrix);
                 }
                 group = new THREE.Mesh(geom, material);
-                scene.add(group)
+                scene.add(group)*/
                 // light
                 var light = new THREE.PointLight(0xffffff,2,100)
                 light.position.x = -10
@@ -122,11 +127,22 @@
             function render() {
                 requestAnimationFrame(render);
                 controls.update();
+                
+                time+=.01
+
+                for (var i = 0; i < group.children.length; i++) {
+                    var c = group.children[i]
+                    c.position.x += Math.sin(time+i % 3) / 100
+                    c.position.y += Math.sin(time+i % 3 + 1) / 100
+                    c.position.z += Math.sin(time+i % 3 + 2) / 100
+                }
+
                 if (mobile) {
                     camera.position.set(0, 0, 0)
-                    camera.translateZ(5);
+                    camera.translateZ(0.001);
                 }
                 renderer.render(scene, camera);
+
             }
         </script>
     </body>
