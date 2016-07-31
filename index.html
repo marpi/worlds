@@ -81,12 +81,6 @@
 
             function setup() {
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-                var texture = new THREE.TextureLoader().load("assets/textures/class.jpg");
-=======
-=======
->>>>>>> origin/master
                 var cubeMap = getCubeMap(5)
                 
                 var texture = new THREE.TextureLoader().load("assets/textures/class.jpg");
@@ -95,14 +89,14 @@
                 texture.repeat.set(1, 1);
                 
                 var geometry = new THREE.SphereGeometry(1,25,20);
-<<<<<<< HEAD
-                var material = new THREE.MeshBasicMaterial({map:texture, side:THREE.BackSide});
-                var object = new THREE.Mesh(geometry, material);
-=======
                 var material = new THREE.MeshBasicMaterial({map:texture, side:THREE.DoubleSide});
+                
+                var color =new THREE.Color(1,1,1)
+                color.setHSL(.5,.5,.5)
+                console.log(color)
+                
                 var object = new THREE.Mesh(geometry, material);
                 object.scale.x=-1;
->>>>>>> origin/master
                 scene.add(object);
                 
 
@@ -125,30 +119,13 @@
 
                 // central object
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-                var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
->>>>>>> origin/master
-=======
                 /*var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
->>>>>>> origin/master
-=======
-                /*var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
->>>>>>> origin/master
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-                var geometry = new THREE.SphereGeometry(0.1);
-                var material = new THREE.BasicMaterial({shading: THREE.SmoothShading});
-=======
-=======
->>>>>>> origin/master
                 var geometry = new THREE.SphereGeometry(1.84, 0.55, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
->>>>>>> origin/master
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);*/
 
