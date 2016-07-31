@@ -8,14 +8,33 @@
         <meta property="og:image" content="https://worlds.marpi.pl/assets/image.jpg"/>
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <style>
+
             body {
                 margin: 0px;
                 overflow: hidden;
-                background-color: #cccccc;
+                background-color: #ffffff;
+            }
+            #test {
+                color: #ffffff;
+                position: fixed;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                flex-direction: column;
+                height: 100%;
+                font-family: arial;
+                width: 100%;
+            }
+            a {
+                color: #ffffff;
             }
         </style>
     </head>
     <body>
+
+    <div id='test'>
+        <div> Hello World</div>
+    </div>
 
         <script src="js/third-party/threejs/three.js"></script>
         <script src="js/third-party/threejs/WebVR.js"></script>
@@ -81,10 +100,16 @@
                 
                 // central object
 
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
-                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
+                var texture = new THREE.TextureLoader().load("assets/textures/drake.jpg");
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(1, 1);
+
+                var geometry = new THREE.TorusKnotGeometry(1, 0.25, 25, 6);
+                var material = new THREE.MeshPhongMaterial({shading: THREE.SmoothShading, map:texture,wireframe: false});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
+
 
                 // cubes
 
@@ -95,6 +120,7 @@
                             var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
+                            mesh.scale.x=1
                             group.add(mesh);
                         }
                     }
@@ -110,11 +136,19 @@
                 group = new THREE.Mesh(geom, material);
                 scene.add(group)
 
+                
+
                 // light
 
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
+
+                var ambient = new THREE.AmbientLight (0x666666)
+                scene.add(ambient)
+
+                var light = new THREE.HemisphereLight( 0xffffff, 0x080820, 1 );
+                scene.add( light );
             }
 
             function render() {
