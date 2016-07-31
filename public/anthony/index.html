@@ -27,7 +27,7 @@
         <script src="js/utils/helpers.js"></script>
 
 
-        <!--<script src="../../js/third-party/threejs/three.js"></script>
+        <script src="../../js/third-party/threejs/three.js"></script>
         <script src="../../js/third-party/threejs/WebVR.js"></script>
         <script src="../../js/third-party/threejs/effects/VREffect.js"></script>
         <script src="../../js/third-party/threejs/effects/StereoEffect.js"></script>
@@ -36,7 +36,7 @@
         <script src="../../js/third-party/threejs/controls/OrbitControls.js"></script>
         <script src="../../js/third-party/TweenMax.min.js"></script>
         <script src="../../js/utils/helpers.js"></script>
--->
+
 
 
         <script>
@@ -136,31 +136,31 @@
                 ringMesh1.name = "ring1";
                 scene.add(ringMesh1);
 
-                // // ring 
-                // var ringGeo2 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
-                // var ringMat = new THREE.MeshBasicMaterial( { color: 0x0000ff, side: THREE.DoubleSide } );
-                // var ringMesh2 = new THREE.Mesh( ringGeo2, ringMat );
-                // ringMesh2.name = "ring2";
-                // ringMesh2.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI/2)
-                // scene.add(ringMesh2);
+                // ring 
+                var ringGeo2 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
+                var ringMat = new THREE.MeshBasicMaterial( { color: 0x0000ff, side: THREE.DoubleSide } );
+                var ringMesh2 = new THREE.Mesh( ringGeo2, ringMat );
+                ringMesh2.name = "ring2";
+                ringMesh2.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI/2)
+                scene.add(ringMesh2);
                 
-                // // ring 
-                // var ringGeo3 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
-                // var ringMat = new THREE.MeshBasicMaterial( { color: 0x00ffff, side: THREE.DoubleSide } );
-                // var ringMesh3 = new THREE.Mesh( ringGeo3, ringMat );
-                // ringMesh3.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2)                
-                // ringMesh3.name = "ring3";
-                // scene.add(ringMesh3);
+                // ring 
+                var ringGeo3 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
+                var ringMat = new THREE.MeshBasicMaterial( { color: 0x00ffff, side: THREE.DoubleSide } );
+                var ringMesh3 = new THREE.Mesh( ringGeo3, ringMat );
+                ringMesh3.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2)                
+                ringMesh3.name = "ring3";
+                scene.add(ringMesh3);
 
 
             }
 
             function render() {
                 var ring1 = scene.getObjectByName("ring1");
-                // var ring2 = scene.getObjectByName("ring2");
-                // var ring3 = scene.getObjectByName("ring3");
+                var ring2 = scene.getObjectByName("ring2");
+                var ring3 = scene.getObjectByName("ring3");
 
-                var rings = [ring1, ring2, ring3];
+                // var rings = [ring1, ring2, ring3];
                 var rings = [ring1, ring2];
                 // rotateRing3(ring3)
                 
