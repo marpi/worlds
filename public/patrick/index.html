@@ -59,7 +59,7 @@
                 // controls
 
                 controls = new THREE.OrbitControls(camera);
-                controls.autoRotate = true;
+                controls.autoRotate = false;
 
                 if (WEBVR.isAvailable() === true) {
                     controls = new THREE.VRControls(camera);
@@ -80,8 +80,8 @@
                 
                 // central object
 
-                var geometry = new THREE.TorusKnotGeometry(1, .45, 22, 6);
-                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
+                var geometry = new THREE.TorusKnotGeometry(1.84, .45, 22, 6);
+                var material = new THREE.MeshPhongMaterial({shading: THREE.SmoothShading});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
 
