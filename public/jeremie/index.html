@@ -109,7 +109,7 @@
 
                 // All visuals are in material, like a clother covering the geometry
                 var material = new THREE.MeshPhongMaterial({
-                  color: '#00B0AB',
+                  color: '#fff',
                   shading: THREE.FlatShading,
                   wireframe: false,
                 });
@@ -121,19 +121,27 @@
                 // cubes
 
                 var group = new THREE.Object3D();
+
                 for (var _x = -3; _x <= 3; _x++) {
                     for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
-                            var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
+                            var geo = new THREE.SphereGeometry( 0.1, 20, 20 );
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
+                            mesh.rotation.z = Math.random(10)
+                            mesh.scale.x = Math.random(10)
+                            mesh.scale.y = Math.random(10)
+                            mesh.scale.z = Math.random(10)
                             group.add(mesh);
                         }
                     }
                 }
 
                 // merge
+                // This code runs a lot of different elements together
 
+
+                // !!!! Investigate what this does laterz!
                 var geom = new THREE.Geometry()
                 for (var i = 0; i < group.children.length; i++) {
                     group.children[i].updateMatrix();
@@ -147,6 +155,9 @@
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
+
+                // var ambientLight = new THREE.AmbientLight(0xffffff);
+                // scene.add(ambientLight)
             }
 
             function render() {
