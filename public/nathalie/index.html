@@ -109,7 +109,7 @@
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
 
-                var geometry = new THREE.TorusKnotGeometry(1.84, 0.55, 10, 6);
+                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
                 //var material = new THREE.MeshBasicMaterial({color:0xFF000,shading: THREE.FlatShading, wireframe:true});
                 var object = new THREE.Mesh(geometry, material);
@@ -143,7 +143,7 @@
 
                 // light
 
-                var light = new THREE.DirectionalLight(0xffffff);
+                var light = new THREE.DirectionalLight(0xffffff,2);
                 light.position.set(-1, 1.5, 0.5);
                 camera.add(light);
             }
