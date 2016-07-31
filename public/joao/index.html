@@ -80,7 +80,7 @@
                 
                 // central object
 
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
+                var geometry = new THREE.TorusKnotGeometry(0.64, 0.40, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
@@ -111,7 +111,7 @@
 
                 // light
 
-                var light = new THREE.DirectionalLight(0xffffff);
+                var light = new THREE.DirectionalLight(0xff0000);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
             }
