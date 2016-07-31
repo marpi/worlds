@@ -157,10 +157,10 @@
 
             function render() {
                 var ring1 = scene.getObjectByName("ring1");
-                var ring2 = scene.getObjectByName("ring2");
-                var ring3 = scene.getObjectByName("ring3");
+                // var ring2 = scene.getObjectByName("ring2");
+                // var ring3 = scene.getObjectByName("ring3");
 
-                // var rings = [ring1, ring2, ring3];
+                var rings = [ring1, ring2, ring3];
                 var rings = [ring1, ring2];
                 // rotateRing3(ring3)
                 
@@ -168,7 +168,6 @@
                 requestAnimationFrame(render);
 
                 controls.update();
-                rotateRing()
 
                 if (mobile) {
                     camera.position.set(0, 0, 0)
