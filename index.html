@@ -89,8 +89,9 @@
                 texture.repeat.set(1, 1);
                 
                 var geometry = new THREE.SphereGeometry(1,25,20);
-                var material = new THREE.MeshBasicMaterial({map:texture, side:THREE.BackSide});
+                var material = new THREE.MeshBasicMaterial({map:texture, side:THREE.DoubleSide});
                 var object = new THREE.Mesh(geometry, material);
+                object.scale.x=-1;
                 scene.add(object);
                 
 
