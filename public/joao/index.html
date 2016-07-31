@@ -80,7 +80,7 @@
                 
                 // central object
 
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
+                var geometry = new THREE.TorusKnotGeometry(0.64, 0.40, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
@@ -91,7 +91,7 @@
                 for (var _x = -3; _x <= 3; _x++) {
                     for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
-                            var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
+                            var geo = new THREE.BoxGeometry(.2, .1, .1, 1, 1, 1)
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
                             group.add(mesh);
@@ -111,7 +111,7 @@
 
                 // light
 
-                var light = new THREE.DirectionalLight(0xffffff);
+                var light = new THREE.DirectionalLight(0xff0000);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
             }
