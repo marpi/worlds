@@ -77,6 +77,18 @@
             }
 
             function setup() {
+                var cubeMap = getCubeMap(5)
+                
+                var texture = new THREE.TextureLoader().load("assets/textures/fog.jpg");
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(1, 1);
+                
+                var geometry = new THREE.SphereGeometry(1,25,20);
+                var material = new THREE.MeshBasicMaterial({map:texture, side:THREE.DoubleSide});
+                var object = new THREE.Mesh(geometry, material);
+                object.scale.x=-1;
+                scene.add(object);
                 
                 // central object
 
