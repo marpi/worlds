@@ -83,7 +83,7 @@
 
             function setup() {
                 
-                var cubeMap = getCubeMap(0)
+                var cubeMap = getCubeMap(5)
 
                 // skybox
 
@@ -109,7 +109,7 @@
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
 
-                var geometry = new THREE.TorusKnotGeometry(1.84, 0.55, 25, 6);
+                var geometry = new THREE.TorusKnotGeometry(1.84, 0.55, 10, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
                 //var material = new THREE.MeshBasicMaterial({color:0xFF000,shading: THREE.FlatShading, wireframe:true});
                 var object = new THREE.Mesh(geometry, material);
@@ -143,12 +143,9 @@
 
                 // light
 
-                var light = new THREE.DirectionalLight(0x404040, 1);
+                var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
-                scene.add(light);
-
-                var ambient = new THREE.AmbientLight(0x404040, 0.5);
-                scene.add(ambient);
+                camera.add(light);
             }
 
             function render() {
