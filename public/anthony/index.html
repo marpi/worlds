@@ -135,14 +135,41 @@
 
 
                 // ring 
-                var ringGeo = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
+                var ringGeo1 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
                 var ringMat = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
-                var ringMesh = new THREE.Mesh( ringGeo, material );
-                ringMesh.name = "ring";
-                scene.add(ringMesh);
+                var ringMesh1 = new THREE.Mesh( ringGeo1, ringMat );
+                ringMesh1.name = "ring1";
+                scene.add(ringMesh1);
+
+                // ring 
+                var ringGeo2 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
+                var ringMat = new THREE.MeshBasicMaterial( { color: 0x0000ff, side: THREE.DoubleSide } );
+                var ringMesh2 = new THREE.Mesh( ringGeo2, ringMat );
+                ringMesh2.name = "ring2";
+                ringMesh2.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI/2)
+                scene.add(ringMesh2);
+                
+                // ring 
+                var ringGeo3 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
+                var ringMat = new THREE.MeshBasicMaterial( { color: 0x00ffff, side: THREE.DoubleSide } );
+                var ringMesh3 = new THREE.Mesh( ringGeo3, ringMat );
+                ringMesh3.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2)                
+                ringMesh3.name = "ring3";
+                scene.add(ringMesh3);
+
+
             }
 
             function render() {
+                var ring1 = scene.getObjectByName("ring1");
+                var ring2 = scene.getObjectByName("ring2");
+                var ring3 = scene.getObjectByName("ring3");
+
+                // var rings = [ring1, ring2, ring3];
+                var rings = [ring1, ring2];
+                rotateRing3(ring3)
+                
+                rings.forEach(x => rotateRing(x));
                 requestAnimationFrame(render);
 
                 controls.update();
@@ -155,13 +182,25 @@
                 renderer.render(scene, camera);
 
             }
-            function rotateRing(){
-                var ring = scene.getObjectByName("ring");
+            function rotateRing(ring, axis){
+                if (!ring || !ring.rotation){
+                    return;
+                }
                 var theta = ring.rotation._y;
                 if (theta > 3* Math.PI){
                     theta = 0;
                 }
-                ring.rotateOnAxis(new THREE.Vector3(1,0,0), theta+=0.01);
+                ring.rotateOnAxis(new THREE.Vector3(0,0,1), theta+=0.01);
+            }   
+            function rotateRing3(ring, axis){
+                if (!ring || !ring.rotation){
+                    return;
+                }
+                var theta = ring.rotation._y;
+                if (theta > 3* Math.PI){
+                    theta = 0;
+                }
+                ring.rotateOnAxis(new THREE.Vector3(0,1,0), theta+=0.01);
             }   
 
         </script>
