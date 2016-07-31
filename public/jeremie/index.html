@@ -63,6 +63,9 @@
                 // (perspective, aspect ratio, nearest point, farthest point)
                 // 1 unit is usually 1 meter
                 camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+                // this is where you set what people will be seeing first
+                // Max ditance lets you set the max zoom out level
                 camera.position.set(0, 0, 3);
                 camera.focalLength = camera.position.distanceTo(scene.position);
 
@@ -72,6 +75,8 @@
 
                 controls = new THREE.OrbitControls(camera);
                 controls.autoRotate = true;
+
+
 
                 // This takes care of high resloution devices, switches rendering modes
 
@@ -97,6 +102,8 @@
 
 
             function setup() {
+
+
 
                 // central object
 
