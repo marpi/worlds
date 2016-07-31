@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>WebVR World — Uli</title>
+        <title>WebVR World Uli</title>
         <meta charset="utf-8">
         <meta property="og:title" content="WebVR Workshop"/>
         <meta property="og:type" content="website"/>
@@ -11,6 +11,7 @@
             body {
                 margin: 0px;
                 overflow: hidden;
+                background-color: #000;
             }
         </style>
     </head>
@@ -24,14 +25,16 @@
         <script src="js/third-party/threejs/controls/VRControls.js"></script>
         <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
         <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
-        
+
         <script src="js/third-party/TweenMax.min.js"></script>
-        
+
         <script src="js/utils/helpers.js"></script>
 
         <script>
             var camera, scene, renderer;
             var mobile = false;
+
+            var group;
 
             init();
             setup();
@@ -52,14 +55,16 @@
 
                 // camera
 
-                camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
-                camera.position.set(0, 0, 3);
+                camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, .1, 1000);
+                camera.position.set(0, 0, 5.001);
                 camera.focalLength = camera.position.distanceTo(scene.position);
+                scene.add(camera)
 
                 // controls
 
                 controls = new THREE.OrbitControls(camera);
                 controls.autoRotate = true;
+                controls.maxDistance=10
 
                 if (WEBVR.isAvailable() === true) {
                     controls = new THREE.VRControls(camera);
@@ -77,23 +82,66 @@
             }
 
             function setup() {
-                
-                // central object
 
-                var geometry = new THREE.TorusKnotGeometry(3.64, 0.45, 25, 6);
-                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
+                var cubeMap = getCubeMap(6)
+                
+                var texture = new THREE.TextureLoader().load("assets/textures/class.jpg");
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(1, 1);
+                
+                var geometry = new THREE.SphereGeometry(4,25,20);
+                var material = new THREE.MeshBasicMaterial({map:texture, side:THREE.BackSide});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
+                
+
+
+
+                // skybox
+
+                /*var cubeShader = THREE.ShaderLib['cube'];
+                cubeShader.uniforms['tCube'].value = cubeMap;
+
+                var skyBoxMaterial = new THREE.ShaderMaterial({
+                    fragmentShader: cubeShader.fragmentShader,
+                    vertexShader: cubeShader.vertexShader,
+                    uniforms: cubeShader.uniforms,
+                    depthWrite: false,
+                    side: THREE.BackSide
+                });
+
+                var skyBox = new THREE.Mesh(new THREE.SphereGeometry(100, 100, 100), skyBoxMaterial);
+
+                scene.add(skyBox);*/
+
+                // central object
+
+                var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(1, 1);
+
+                var geometry = new THREE.SphereGeometry(1.84, 0.55, 25, 6);
+                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
+                var object = new THREE.Mesh(geometry, material);
+                // scene.add(object);
 
                 // cubes
 
-                var group = new THREE.Object3D();
-                for (var _x = -3; _x <= 3; _x++) {
-                    for (var _y = -3; _y <= 3; _y++) {
-                        for (var _z = -3; _z <= 3; _z++) {
+                group = new THREE.Object3D();
+                for (var _x = -4; _x <= 4; _x++) {
+                    for (var _y = -4; _y <= 4; _y++) {
+                        for (var _z = -4; _z <= 4; _z++) {
                             var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
+                            mesh.rotation.x = _x / 10
+                            mesh.rotation.y = 0
+                            mesh.rotation.z = _x / 10
+                            mesh.scale.x = 1
+                            mesh.scale.y = 4
+                            mesh.scale.z = 1
                             group.add(mesh);
                         }
                     }
@@ -106,6 +154,9 @@
                     group.children[i].updateMatrix();
                     geom.merge(group.children[i].geometry, group.children[i].matrix);
                 }
+
+                var cubeMaterial = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: texture, wireframe: false});
+
                 group = new THREE.Mesh(geom, material);
                 scene.add(group)
 
@@ -113,7 +164,12 @@
 
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
+                //var light = new THREE.PointLight(0xFFFFFF,1,10)
+                //light.position.x=-1
                 scene.add(light);
+
+                //var ambient = new THREE.AmbientLight(0x666666)
+                //scene.add(ambient)
             }
 
             function render() {
@@ -123,7 +179,7 @@
 
                 if (mobile) {
                     camera.position.set(0, 0, 0)
-                    camera.translateZ(5);
+                    camera.translateZ(0.001);
                 }
                 renderer.render(scene, camera);
 
