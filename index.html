@@ -85,7 +85,7 @@
                 // central object
 
                 var geometry = new THREE.TorusKnotGeometry(1.84, 0.55, 25, 6);
-                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
+                var material = new THREE.MeshPhongMaterial({color:0xFF0000, shading: THREE.SmoothShading});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
 
