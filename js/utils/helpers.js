@@ -145,3 +145,13 @@ function getCubeMap(i) {
  
  *  
  */
+
+/*
+ * 
+var texture = new THREE.TextureLoader().load("textures/image2.jpg");
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(1, 1);
+        
+ *  
+ */
