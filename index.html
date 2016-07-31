@@ -33,6 +33,7 @@
         <script>
             var camera, scene, renderer;
             var mobile = false;
+            var material,cubeShader
 
             var cubes = []
             var group
@@ -88,6 +89,10 @@
             }
 
             function click() {
+                var cubeMap=getCubeMap(Math.floor(Math.random()*10))
+                cubeShader.uniforms['tCube'].value = cubeMap;
+                material.envMap=cubeMap
+                
                 var center = new THREE.Vector3();
                 for (var i = 0; i < group.children.length; i++) {
                     var newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
@@ -130,7 +135,7 @@
 
                 // skybox
 
-                var cubeShader = THREE.ShaderLib['cube'];
+                cubeShader = THREE.ShaderLib['cube'];
                 cubeShader.uniforms['tCube'].value = cubeMap;
 
                 var skyBoxMaterial = new THREE.ShaderMaterial({
@@ -158,17 +163,17 @@
                  scene.add(object);*/
                 var geometry = new THREE.IcosahedronGeometry(1, 1);
                 verticesOriginal = geometry.clone().vertices;
-                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
+                material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
                 object = new THREE.Mesh(geometry, material);
                 scene.add(object);
 
                 // cubes
 
                 group = new THREE.Object3D();
+                var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
                 for (var _x = -2; _x <= 2; _x++) {
                     for (var _y = -2; _y <= 2; _y++) {
                         for (var _z = -2; _z <= 2; _z++) {
-                            var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
                             mesh.rotation.x = _x / 10
