@@ -77,11 +77,33 @@
             }
 
             function setup() {
+                var cubeMap = getCubeMap(2)
+
+              // skybox
+
+                var cubeShader = THREE.ShaderLib['cube'];
+                cubeShader.uniforms['tCube'].value = cubeMap;
+
+                var skyBoxMaterial = new THREE.ShaderMaterial({
+                  fragmentShader: cubeShader.fragmentShader,
+                  vertexShader: cubeShader.vertexShader,
+                  uniforms: cubeShader.uniforms,
+                  depthWrite: false,
+                  side: THREE.BackSide
+                });
+
+                var skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), skyBoxMaterial);
+
+                scene.add(skyBox);
 
                 // central object
+                var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
 
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
-                var material = new THREE.MeshPhongMaterial({color:0xFF000, shading: THREE.FlatShading});
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(1, 1);
+
+                var geometry = new THREE.TorusKnotGeometry(1.84, 0.55, 25, 6);
+                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
 
@@ -94,6 +116,12 @@
                             var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
+                            mesh.rotation.x = _x / 10
+                            mesh.rotation.y = 0
+                            mesh.rotation.z = _x / 10
+                            mesh.scale.x = 1
+                            mesh.scale.y = 10
+                            mesh.scale.z = 1
                             group.add(mesh);
                         }
                     }
@@ -113,7 +141,7 @@
 
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
-                scene.add(light);
+                camera.add(light);
 
                 var ambient = new THREE.AmbientLight(0x666666)
                 scene.add(ambient);
