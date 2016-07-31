@@ -79,7 +79,7 @@
             function setup() {
                 var cubeMap = getCubeMap(5)
                 
-                var texture = new THREE.TextureLoader().load("assets/textures/fog.jpg");
+                var texture = new THREE.TextureLoader().load("assets/textures/sunset.jpg");
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
@@ -92,7 +92,7 @@
                 
                 // central object
 
-                var texture = new THREE.TextureLoader().load("assets/textures/fog.jpg");
+                var texture = new THREE.TextureLoader().load("assets/textures/sunset.jpg");
                 var geometry = new THREE.SphereGeometry(1, 0.25, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.SmoothShading});
                 var object = new THREE.Mesh(geometry, material);
