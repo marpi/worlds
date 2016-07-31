@@ -42,6 +42,7 @@
         <script>
             var camera, scene, renderer;
             var mobile = false;
+            var spheres = [];
 
             init();
             setup();
@@ -49,7 +50,24 @@
             var ring2 = scene.getObjectByName("ring2");
             var ring3 = scene.getObjectByName("ring3");
             render();
+            spheres = populateSpheres();
+            newPos();
+            function newPos(){
+                spheres.forEach(function(sp){
+                    scene.add(sp);
+                    var x = random(20);
+                    var y = random(30);
+                    var z = random(20);
+                    sp.visible = true;
+                    TweenMax.to(sp.position, 100,{
+                        x:x,
+                        y:y,
+                        z:z
+                    });
+                });
 
+            }
+            window.addEventListener('click', newPos);
             function init() {
 
                 // renderer
@@ -105,7 +123,7 @@
                 for (var _x = -3; _x <= 3; _x++) {
                     for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
-                            var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
+                            var geo = new THREE.BoxGeometry(Math.random()/10 *_y, Math.random()/10 *_z, Math.random()/10 *_x, 1, 1, 1)
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
                             group.add(mesh);
@@ -125,21 +143,24 @@
 
                 // light
 
-                var light = new THREE.DirectionalLight(0xffffff);
+                var light = new THREE.DirectionalLight(0xffffff, 10);
                 light.position.set(-1, 1.5, 0.5);
+                // light.target.position.set( 0, 0, 0 ); 
+                // var lightHelper = new THREE.DirectionalLightHelper(light, 50);
                 scene.add(light);
+                // camera.add(lightHelper);
 
 
                 // ring 
                 var ringGeo1 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
-                var ringMat = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+                var ringMat = new THREE.MeshPhongMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
                 var ringMesh1 = new THREE.Mesh( ringGeo1, ringMat );
                 ringMesh1.name = "ring1";
                 scene.add(ringMesh1);
 
                 // ring 
                 var ringGeo2 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
-                var ringMat = new THREE.MeshBasicMaterial( { color: 0x0000ff, side: THREE.DoubleSide } );
+                var ringMat = new THREE.MeshPhongMaterial( { color: 0x0000ff, side: THREE.DoubleSide } );
                 var ringMesh2 = new THREE.Mesh( ringGeo2, ringMat );
                 ringMesh2.name = "ring2";
                 ringMesh2.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI/2)
@@ -147,7 +168,7 @@
                 
                 // ring 
                 var ringGeo3 = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
-                var ringMat = new THREE.MeshBasicMaterial( { color: 0x00ffff, side: THREE.DoubleSide } );
+                var ringMat = new THREE.MeshPhongMaterial( { color: 0x00ffff, side: THREE.DoubleSide } );
                 var ringMesh3 = new THREE.Mesh( ringGeo3, ringMat );
                 ringMesh3.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2)                
                 ringMesh3.name = "ring3";
@@ -173,16 +194,14 @@
             }
 
             function render() {
-                // var ring1 = scene.getObjectByName("ring1");
-                // var ring2 = scene.getObjectByName("ring2");
-                // var ring3 = scene.getObjectByName("ring3");
-                // rotateRing(ring1);
-                // // var rings = [ring1, ring2, ring3];
+
                 var rings = [ring1, ring2];
-                // rotateRing3(ring3)
+                rotateRing3(ring3)
                 rings.forEach(function (rng){
-                    rotateRing(rng);
+                    rotateRing(rng) ;
                 });
+
+                
                 
                 requestAnimationFrame(render);
 
@@ -200,22 +219,33 @@
                     return;
                 }
                 var theta = ring.rotation._y;
-                if (theta > 3* Math.PI){
-                    theta = 0;
-                }
-                ring.rotateOnAxis(new THREE.Vector3(0,0,1), theta+=0.01);
+                ring.rotateOnAxis(new THREE.Vector3(0,0,1), theta+=0.05);
             }   
             function rotateRing3(ring, axis){
                 if (!ring || !ring.rotation){
                     return;
                 }
-                var theta = ring.rotation._y;
-                if (theta > 3* Math.PI){
-                    theta = 0;
-                }
-                ring.rotateOnAxis(new THREE.Vector3(0,.5,.5), theta+=0.01);
+                var theta = ring.rotation._z;
+                ring.rotateOnAxis(new THREE.Vector3(0,0,1), theta+=0.05);
             }   
+            function populateSpheres (){
+                var arr= [];
+                var TOTAL = 100;
+                for (var i =0; i < TOTAL; i++){
+                    var sphGeo = new THREE.SphereGeometry(.1,10,10);
+                    var mat = new THREE.MeshPhongMaterial({color:0xffffff});
+                    var sphere = new THREE.Mesh(sphGeo, mat);
+                    sphere.position.set(random(10),random(10),random(10));
+                    sphere.visible = false;
+                    arr.push(sphere);
+                }
+                return arr;
 
+            }
+
+            function random(num){
+                return (Math.random()* 2 * num) -num;
+            }
         </script>
     </body>
 </html>
