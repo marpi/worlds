@@ -95,11 +95,13 @@
                 
                 // central object
 
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
+                // var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, color :  new THREE.Color( 0xff0000 )});
 
-                var object = new THREE.Mesh(geometry, material);
-                scene.add(object);
+                // var object = new THREE.Mesh(geometry, material);
+                // scene.add(object);
+                // debugger
+                // object.visible=false;
 
                 // cubes
 
@@ -130,12 +132,21 @@
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
+
+
+                // ring 
+                var ringGeo = new THREE.RingGeometry( 1, 2, 32, 32, 0, Math.PI );
+                var ringMat = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide } );
+                var ringMesh = new THREE.Mesh( ringGeo, material );
+                ringMesh.name = "ring";
+                scene.add(ringMesh);
             }
 
             function render() {
                 requestAnimationFrame(render);
 
                 controls.update();
+                rotateRing()
 
                 if (mobile) {
                     camera.position.set(0, 0, 0)
@@ -144,6 +155,14 @@
                 renderer.render(scene, camera);
 
             }
+            function rotateRing(){
+                var ring = scene.getObjectByName("ring");
+                var theta = ring.rotation._y;
+                if (theta > 3* Math.PI){
+                    theta = 0;
+                }
+                ring.rotateOnAxis(new THREE.Vector3(1,0,0), theta+=0.01);
+            }   
 
         </script>
     </body>
