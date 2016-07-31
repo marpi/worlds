@@ -11,6 +11,7 @@
             body {
                 margin: 0px;
                 overflow: hidden;
+                background: #f00;
             }
         </style>
     </head>
@@ -24,9 +25,9 @@
         <script src="js/third-party/threejs/controls/VRControls.js"></script>
         <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
         <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
-        
+
         <script src="js/third-party/TweenMax.min.js"></script>
-        
+
         <script src="js/utils/helpers.js"></script>
 
         <script>
@@ -77,7 +78,7 @@
             }
 
             function setup() {
-                
+
                 // central object
 
                 var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
