@@ -87,7 +87,7 @@
 
                 // cubes
 
-                var group = new THREE.Object3D();
+                /*var group = new THREE.Object3D();
                 for (var _x = -3; _x <= 3; _x++) {
                     for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
@@ -97,7 +97,7 @@
                             group.add(mesh);
                         }
                     }
-                }
+                }*/
 
                 // merge
 
@@ -114,6 +114,9 @@
                 var light = new THREE.DirectionalLight(0xffffff);
                 light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
+
+                var ambient = new THREE.AmbientLight(0x666666)
+                scene.add(ambient);
             }
 
             function render() {
