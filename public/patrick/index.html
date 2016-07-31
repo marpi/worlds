@@ -120,8 +120,10 @@
 
                 // light
 
-                var light = new THREE.DirectionalLight(0xffffff);
-                light.position.set(-1, 1.5, 0.5);
+                var light = new THREE.PointLight(0xffffff,1,10)
+
+                //var light = new THREE.DirectionalLight(0xffffff);
+                //light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
             }
 
