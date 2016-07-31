@@ -80,6 +80,25 @@
 
             function setup() {
 
+                var cubeMap = getCubeMap(0)
+
+                // skybox
+
+                var cubeShader = THREE.ShaderLib['cube'];
+                cubeShader.uniforms['tCube'].value = cubeMap;
+
+                var skyBoxMaterial = new THREE.ShaderMaterial({
+                    fragmentShader: cubeShader.fragmentShader,
+                    vertexShader: cubeShader.vertexShader,
+                    uniforms: cubeShader.uniforms,
+                    depthWrite: false,
+                    side: THREE.BackSide
+                });
+
+                var skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), skyBoxMaterial);
+
+                scene.add(skyBox);
+
                 // central object
 
                 var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
@@ -87,26 +106,26 @@
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
 
-                var geometry = new THREE.SphereGeometry(1,10,10);// = new THREE.TorusKnotGeometry(1.84, 0.55, 25, 6);
-                var material = new THREE.MeshPhongMaterial({shading: THREE.SmoothShading,wireframe: false});
+                var geometry = new THREE.TorusKnotGeometry(1.84, 0.55, 25, 6);
+                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
                 var object = new THREE.Mesh(geometry, material);
-                //scene.add(object);
+                scene.add(object);
 
                 // cubes
 
                 var group = new THREE.Object3D();
-                for (var _x = -13; _x <= 13; _x++) {
-                    for (var _y = -13; _y <= 13; _y++) {
+                for (var _x = -3; _x <= 3; _x++) {
+                    for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
                             var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
-                            mesh.rotation.x=_x/10
-                            mesh.rotation.y=0
-                            mesh.rotation.z=_x/10
-                            mesh.scale.x=1
-                            mesh.scale.y=10
-                            mesh.scale.z=1
+                            mesh.rotation.x = _x / 10
+                            mesh.rotation.y = 0
+                            mesh.rotation.z = _x / 10
+                            mesh.scale.x = 1
+                            mesh.scale.y = 10
+                            mesh.scale.z = 1
                             group.add(mesh);
                         }
                     }
@@ -124,14 +143,14 @@
 
                 // light
 
-                //var light = new THREE.DirectionalLight(0xffffff);
-                //light.position.set(-1, 1.5, 0.5);
-                var light = new THREE.PointLight(0xFFFFFF,1,10)
-                light.position.x=-1
+                var light = new THREE.DirectionalLight(0xffffff);
+                light.position.set(-1, 1.5, 0.5);
+                //var light = new THREE.PointLight(0xFFFFFF,1,10)
+                //light.position.x=-1
                 camera.add(light);
-                
+
                 var ambient = new THREE.AmbientLight(0x666666)
-                //scene.add(ambient)
+                scene.add(ambient)
             }
 
             function render() {
