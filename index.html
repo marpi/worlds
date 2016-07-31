@@ -95,7 +95,7 @@
                     side: THREE.BackSide
                 });
 
-                var skyBox = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), skyBoxMaterial);
+                var skyBox = new THREE.Mesh(new THREE.SphereGeometry(100, 100, 100), skyBoxMaterial);
 
                 scene.add(skyBox);
 
@@ -106,7 +106,7 @@
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
 
-                var geometry = new THREE.TorusKnotGeometry(1.84, 0.55, 25, 6);
+                var geometry = new THREE.SphereGeometry(1.84, 0.55, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
