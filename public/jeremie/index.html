@@ -11,15 +11,19 @@
             body {
                 margin: 0px;
                 overflow: hidden;
-                background: #f00;
             }
         </style>
     </head>
     <body>
 
         <script src="js/third-party/threejs/three.js"></script>
+
+        <!-- Getting all the parametrs  -->
         <script src="js/third-party/threejs/WebVR.js"></script>
+
+        <!-- Splits the VR in half rendering mode -->
         <script src="js/third-party/threejs/effects/VREffect.js"></script>
+
         <script src="js/third-party/threejs/effects/StereoEffect.js"></script>
 
         <script src="js/third-party/threejs/controls/VRControls.js"></script>
@@ -41,26 +45,35 @@
             function init() {
 
                 // renderer
-
+                // Engine that setups the scene
                 renderer = new THREE.WebGLRenderer({antialias: true});
                 renderer.setPixelRatio(window.devicePixelRatio);
+                // Full screen browser
                 renderer.setSize(window.innerWidth, window.innerHeight);
+                // add the thing to the body that creates a canvas element
                 document.body.appendChild(renderer.domElement);
 
                 // scene
-
+                // conainer of everything that happends on the stage
                 scene = new THREE.Scene();
 
                 // camera
 
+                // smaller field of view(0) will create an orthographic perspective
+                // (perspective, aspect ratio, nearest point, farthest point)
+                // 1 unit is usually 1 meter
                 camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
                 camera.position.set(0, 0, 3);
                 camera.focalLength = camera.position.distanceTo(scene.position);
 
                 // controls
 
+                // oribt controls lets you zoom in/out of the scene
+
                 controls = new THREE.OrbitControls(camera);
                 controls.autoRotate = true;
+
+                // This takes care of high resloution devices, switches rendering modes
 
                 if (WEBVR.isAvailable() === true) {
                     controls = new THREE.VRControls(camera);
@@ -72,17 +85,36 @@
 
                 // events
 
+
+                // if gyroscope exists then do things
                 window.addEventListener('deviceorientation', setOrientationControls, true);
+
+                // makes the scene responsive
                 window.addEventListener('resize', onWindowResize, false);
 
             }
+
+
 
             function setup() {
 
                 // central object
 
-                var geometry = new THREE.TorusKnotGeometry(1, 0.8, 25, 6);
-                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
+                // This is how you make objects
+                // Set points here
+                var geometry = new THREE.TorusKnotGeometry(0.25, 0.2, 25, 6);
+
+                // Flat shading is low poly style
+                // Todo try wireframe view
+
+                // All visuals are in material, like a clother covering the geometry
+                var material = new THREE.MeshPhongMaterial({
+                  color: '#00B0AB',
+                  shading: THREE.FlatShading,
+                  wireframe: false,
+                });
+
+
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
 
