@@ -81,7 +81,7 @@
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
-                var geometry = new THREE.TorusGeometry(1.84, 0.55, 25, 6);
+                var geometry = new THREE.TorusGeometry(10.84, 0.55, 25, 6);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
