@@ -62,9 +62,25 @@
             }
             function setup() {
 
+              var light = new THREE.AmbientLight(0x4030FF ); // soft white light
+  scene.add( light );
+
+
+  
                 // central object
-                var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
+
+
+                var geometry = new THREE.SphereGeometry(0.64, 0.25, 25, 6);
+
+geometry.vertices.push(
+	new THREE.Vector3( -10,  100, 0 ),
+	new THREE.Vector3( -10, -10, 0 ),
+	new THREE.Vector3(  10, -10, 0 )
+);
+
+geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+
+geometry.computeBoundingSphere();
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
                 var object = new THREE.Mesh(geometry, material);
                 scene.add(object);
@@ -73,13 +89,15 @@
                 for (var _x = -3; _x <= 3; _x++) {
                     for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
-                            var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
+                            var geo = new THREE.BoxGeometry(.1, 10, .1, 1, 1, 1)
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
                             group.add(mesh);
                         }
                     }
                 }
+
+
                 // merge
                 var geom = new THREE.Geometry()
                 for (var i = 0; i < group.children.length; i++) {
