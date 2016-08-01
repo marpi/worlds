@@ -126,7 +126,7 @@
                  texture.wrapT = THREE.RepeatWrapping;
                  texture.repeat.set(10, 10);
 
-                var geometry = new THREE.IcosahedronGeometry(5);
+                var geometry = new THREE.IcosahedronGeometry(7);
                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
                 object = new THREE.Mesh(geometry, material);
                 scene.add(object);
