@@ -33,6 +33,12 @@
             var camera, scene, renderer;
             var mobile = false;
 
+            var cubes = []
+            var group
+            var object
+            
+            var time = 0;
+
             init();
             setup();
             render();
@@ -61,7 +67,7 @@
                 // controls
 
                 controls = new THREE.OrbitControls(camera);
-                controls.autoRotate = false;
+                controls.autoRotate = true;
                 scene.add(camera);
 
                 //check for Vive and Oculus
@@ -83,7 +89,7 @@
 
             function setup() {
                 
-                var cubeMap = getCubeMap(5)
+                var cubeMap = getCubeMap(0)
 
                 // skybox
 
@@ -102,23 +108,32 @@
 
                 scene.add(skyBox);
 
-                // central object
+                // central
+
+                //RGB color 0-1
+                var color = new THREE.Color(1,1,1);
+                color.setHSL(.3,.5,.5);
+                console.log(color)
 
                 var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
 
-                var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
-                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
+                //var geometry = new THREE.TorusGeometry(10 / 10, 3 / 10, 16, 100);
+                var geometry = new THREE.IcosahedronGeometry(1, 1);
+                verticesOriginal = geometry.clone().vertices;
+
+                //var geometry = new THREE.TorusKnotGeometry(0.64, 0.25, 25, 6);
+                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap,wireframe: false});
                 //var material = new THREE.MeshBasicMaterial({color:0xFF000,shading: THREE.FlatShading, wireframe:true});
-                var object = new THREE.Mesh(geometry, material);
+                object = new THREE.Mesh(geometry, material);
                 scene.add(object);
 
 
                 // cubes
 
-                var group = new THREE.Object3D();
+                group = new THREE.Object3D();
                 for (var _x = -3; _x <= 3; _x++) {
                     for (var _y = -3; _y <= 3; _y++) {
                         for (var _z = -3; _z <= 3; _z++) {
@@ -127,18 +142,20 @@
                             mesh.rotation.x=2
                             mesh.position.set(_x, _y, _z)
                             group.add(mesh);
+                            cubes.push(mesh);
                         }
                     }
                 }
 
                 // merge - to avoid having too many elemnts and run faster, for faster rendering
 
-                var geom = new THREE.Geometry()
+                /*var geom = new THREE.Geometry()
                 for (var i = 0; i < group.children.length; i++) {
                     group.children[i].updateMatrix();
                     geom.merge(group.children[i].geometry, group.children[i].matrix);
+                    cube=push.mesh
                 }
-                group = new THREE.Mesh(geom, material);
+                group = new THREE.Mesh(geom, material);*/
                 scene.add(group)
 
                 // light
@@ -152,6 +169,37 @@
                 requestAnimationFrame(render);
 
                 controls.update();
+
+                time+=.01
+
+                //object.rotation.x += .01
+                //object.rotation.y += .01
+
+				var v = object.geometry.vertices
+                for (var i = 0; i < v.length; i++) {
+                    if (Math.random() < .01) {
+                        TweenMax.to(v[i], .1, {
+                            x: verticesOriginal[i].x * (2 + Math.random() * .2),
+                            y: verticesOriginal[i].y * (2 + Math.random() * .2),
+                            z: verticesOriginal[i].z * (2 + Math.random() * .2)
+                        })
+                    } else {
+                        TweenMax.to(v[i], 1, {
+                            x: verticesOriginal[i].x,
+                            y: verticesOriginal[i].y,
+                            z: verticesOriginal[i].z
+                        })
+                    }
+                    //console.log(v)
+                }
+                object.geometry.verticesNeedUpdate = true;
+
+                for (var i = 0; i < group.children.length; i++) {
+                    var c = group.children[i]
+                    c.position.x += Math.sin(time+i % 3) / 100
+                    c.position.y += Math.sin(time+i % 3 + 1) / 100
+                    c.position.z += Math.sin(time+i % 3 + 2) / 100
+                }
 
                 if (mobile) {
                     camera.position.set(0, 0, 0)
