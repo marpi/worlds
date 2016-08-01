@@ -166,7 +166,7 @@
                 // light
 
                 var light = new THREE.DirectionalLight(0xffffff);
-                light.position.set(-1, 1.5, 0.5);
+                light.position.set(-2, 1.5, 0.5);
                 //var light = new THREE.PointLight(0xFFFFFF,1,10)
                 //light.position.x=-1
                 camera.add(light);
@@ -199,9 +199,9 @@
                          c.position.y += Math.sin(time + i % 3 + 1) / 100
                          c.position.z += Math.sin(time + i % 3 + 2) / 100*/
                         TweenMax.to(c.position, 1, {
-                            x: (Math.random() - 2) * 5,
-                            y: (Math.random() - 2) * 5,
-                            z: (Math.random() - 2) * 5
+                            x: (Math.random() - .5) * 5,
+                            y: (Math.random() - .5) * 5,
+                            z: (Math.random() - .5) * 5
                         })
                     }
                 }
