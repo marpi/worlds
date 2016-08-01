@@ -33,7 +33,7 @@
         <script>
             var camera, scene, renderer;
             var mobile = false;
-            var material,cubeShader
+            var material, cubeShader
 
             var cubes = []
             var group
@@ -89,15 +89,15 @@
             }
 
             function click() {
-                
+
                 // change bg
-                
-                var cubeMap=getCubeMap(Math.floor(Math.random()*10))
+
+                var cubeMap = getCubeMap(Math.floor(Math.random() * 10))
                 cubeShader.uniforms['tCube'].value = cubeMap;
-                material.envMap=cubeMap
-                
+                material.envMap = cubeMap
+
                 // animate cubes
-                
+
                 var center = new THREE.Vector3();
                 for (var i = 0; i < group.children.length; i++) {
                     var newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
@@ -166,9 +166,25 @@
                  var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
                  object = new THREE.Mesh(geometry, material);
                  scene.add(object);*/
+
+                var texture = new THREE.TextureLoader().load("assets/textures/image2.jpg");
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(1, 1);
+
                 var geometry = new THREE.IcosahedronGeometry(1, 1);
                 verticesOriginal = geometry.clone().vertices;
-                material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
+                material = new THREE.MeshBasicMaterial({
+                    bumpScale: .1, 
+                    alphaMap: texture, 
+                    transparent: true, 
+                    //side:THREE.DoubleSide
+                    shading: THREE.FlatShading, 
+                    envMap: cubeMap, 
+                    wireframe: false,
+                    //bumpMap: texture, 
+                    //map:texture
+                });
                 object = new THREE.Mesh(geometry, material);
                 scene.add(object);
 
@@ -176,14 +192,19 @@
 
                 group = new THREE.Object3D();
                 var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
+                for (var i=0;i<geo.vertices.length;i++){
+                    geo.vertices[i].x+=(Math.random()-.5)/10
+                    geo.vertices[i].y+=(Math.random()-.5)/10
+                    geo.vertices[i].z+=(Math.random()-.5)/10
+                }
                 for (var _x = -2; _x <= 2; _x++) {
                     for (var _y = -2; _y <= 2; _y++) {
                         for (var _z = -2; _z <= 2; _z++) {
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
-                            mesh.rotation.x = _x / 10
-                            mesh.rotation.y = 0
-                            mesh.rotation.z = _x / 10
+                            mesh.rotation.x = Math.random()
+                            mesh.rotation.y = Math.random()
+                            mesh.rotation.z = Math.random()
                             mesh.scale.x = 1
                             mesh.scale.y = 1
                             mesh.scale.z = 1
