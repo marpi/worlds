@@ -25,4 +25,6 @@ And once you commit your changes, and want to see them in Google Cardboard:
 
 [https://worlds.marpi.pl/](https://worlds.marpi.pl/)
 
-Good luck!
+### And here's what we made
+
+[https://worlds.marpi.pl/public/](https://worlds.marpi.pl/public/)
