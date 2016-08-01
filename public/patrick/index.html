@@ -141,8 +141,8 @@
                             var mesh = new THREE.Mesh(geo, material)
                             mesh.position.set(_x, _y, _z)
                             mesh.rotation.x = _x / 10
-                             mesh.rotation.y = 0
-                             mesh.rotation.z = _x / 10
+                            mesh.rotation.y = 0
+                            mesh.rotation.z = _x / 10
                             mesh.scale.x = 1
                             mesh.scale.y = 1
                             mesh.scale.z = 1
@@ -199,9 +199,9 @@
                          c.position.y += Math.sin(time + i % 3 + 1) / 100
                          c.position.z += Math.sin(time + i % 3 + 2) / 100*/
                         TweenMax.to(c.position, 1, {
-                            x: (Math.random() - .5) * 3,
-                            y: (Math.random() - .5) * 3,
-                            z: (Math.random() - .5) * 3
+                            x: (Math.random() - .5) * 5,
+                            y: (Math.random() - .5) * 5,
+                            z: (Math.random() - .5) * 5
                         })
                     }
                 }
