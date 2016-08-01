@@ -66,7 +66,7 @@
 
                 // this is where you set what people will be seeing first
                 // Max ditance lets you set the max zoom out level
-                camera.position.set(10, 10, 10);
+                camera.position.set(0, 0, 3);
                 camera.focalLength = camera.position.distanceTo(scene.position);
 
                 // controls
@@ -99,13 +99,17 @@
 
             }
 
+
+
             function setup() {
+
+
 
                 // central object
 
                 // This is how you make objects
                 // Set points here
-                var geometry = new THREE.TorusGeometry(10, 3, 16, 100);
+                var geometry = new THREE.TorusKnotGeometry(0.25, 0.2, 25, 6);
 
                 // Flat shading is low poly style
                 // Todo try wireframe view
@@ -118,34 +122,27 @@
                 });
 
 
-
-
-                for( var i = 0; i <= 10; i = i + 1) {
-                  var object = new THREE.Mesh(geometry, material);
-
-                  object.position.set(100 * i, 100 * i, 100 * i);
-                  scene.add(object);
-                }
-
+                var object = new THREE.Mesh(geometry, material);
+                scene.add(object);
 
                 // cubes
 
                 var group = new THREE.Object3D();
 
-                // for (var _x = -3; _x <= 3; _x++) {
-                //     for (var _y = -3; _y <= 3; _y++) {
-                //         for (var _z = -3; _z <= 3; _z++) {
-                //             var geo = new THREE.SphereGeometry( 0.1, 20, 20 );
-                //             var mesh = new THREE.Mesh(geo, material)
-                //             mesh.position.set(_x, _y, _z)
-                //             mesh.rotation.z = Math.random(10)
-                //             mesh.scale.x = Math.random(10)
-                //             mesh.scale.y = Math.random(10)
-                //             mesh.scale.z = Math.random(10)
-                //             group.add(mesh);
-                //         }
-                //     }
-                // }
+                for (var _x = -3; _x <= 3; _x++) {
+                    for (var _y = -3; _y <= 3; _y++) {
+                        for (var _z = -3; _z <= 3; _z++) {
+                            var geo = new THREE.SphereGeometry( 0.1, 20, 20 );
+                            var mesh = new THREE.Mesh(geo, material)
+                            mesh.position.set(_x, _y, _z)
+                            mesh.rotation.z = Math.random(10)
+                            mesh.scale.x = Math.random(10)
+                            mesh.scale.y = Math.random(10)
+                            mesh.scale.z = Math.random(10)
+                            group.add(mesh);
+                        }
+                    }
+                }
 
                 // merge
                 // This code runs a lot of different elements together
@@ -163,7 +160,7 @@
                 // light
 
                 var light = new THREE.DirectionalLight(0xffffff);
-                light.position.set(2, 2, 0.5);
+                light.position.set(-1, 1.5, 0.5);
                 scene.add(light);
 
                 // var ambientLight = new THREE.AmbientLight(0xffffff);
