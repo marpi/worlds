@@ -89,9 +89,14 @@
             }
 
             function click() {
+                
+                // change bg
+                
                 var cubeMap=getCubeMap(Math.floor(Math.random()*10))
                 cubeShader.uniforms['tCube'].value = cubeMap;
                 material.envMap=cubeMap
+                
+                // animate cubes
                 
                 var center = new THREE.Vector3();
                 for (var i = 0; i < group.children.length; i++) {
