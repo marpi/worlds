@@ -32,7 +32,6 @@
         <script>
 
         function master () {
-            var drawVisual;
             var audio;
             var source;
 
@@ -328,8 +327,22 @@
 
             }
         }
+        function playSound(){
+            var audio;
+            var source;
+
+            audio = new Audio();
+            audio.src = 'http://api.soundcloud.com/tracks/273278810/stream?client_id=17a992358db64d99e492326797fff3e8';
+            // 273278810
+            // 204082098
+            // 195692475
+            audio.controls = true;
+            audio.play();
+            audio.crossOrigin = "anonymous";
+        }
         window.addEventListener('click', master, false);
-        window.addEventListener('touchend', master, false);
+        window.addEventListener('touchend', playSound, false);
+
 
         </script>
     </body>
