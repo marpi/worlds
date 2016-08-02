@@ -16,8 +16,6 @@
         </style>
     </head>
     <body>
-
-
         <script src="js/third-party/threejs/three.js"></script>
         <script src="js/third-party/threejs/WebVR.js"></script>
         <script src="js/third-party/threejs/effects/VREffect.js"></script>
@@ -32,23 +30,25 @@
         <script src="js/utils/helpers.js"></script>
 
         <script>
-        window.addEventListener('touchend', loadAudio, false);
-        function loadAudio() {
 
+        function master () {
             var drawVisual;
-            var audio = new Audio();
+            var audio;
+            var source;
+
+            audio = new Audio();
             audio.src = 'http://api.soundcloud.com/tracks/273278810/stream?client_id=17a992358db64d99e492326797fff3e8';
             // 273278810
             // 204082098
             // 195692475
             audio.controls = true;
-            audio.autoplay = true;
+            audio.play();
             audio.crossOrigin = "anonymous";
 
             var audioCtx = new (window.AudioContext || window.webkitAudioContext); // this is because it's not been standardised accross browsers yet.
             analyser = audioCtx.createAnalyser();
             analyser.fftSize = 256; // see - there is that 'fft' thing. 
-            var source = audioCtx.createMediaElementSource(audio); // this is where we hook up the <audio> element
+            source = audioCtx.createMediaElementSource(audio); // this is where we hook up the <audio> element
             source.connect(analyser);
             analyser.connect(audioCtx.destination);
 
@@ -56,356 +56,281 @@
             // console.log(bufferLength);
             var dataArray = new Uint8Array(bufferLength);
 
-            // // var canvasElement = document.getElementById('canvas');
-            // // var context = canvasElement.getContext("2d");
-            // // context.fillStyle = 'rgb(200,0,0)';
-            // // context.fillRect(0, 0, 200, 200);
-            // function draw() {
-            //   drawVisual = requestAnimationFrame(draw);
-
-            //   analyser.getByteFrequencyData(dataArray);
-
-            //   for(var i = 0; i < bufferLength; i++) {
-            //     val = dataArray[i];
-            //     var red = val;
-            //     var green = 255 - val;
-            //     var blue = val / 2;
-            //     console.log([red,green,blue]);
-            //     context.fillStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
-            //     context.fillRect(0, 0, 200, 200);
-            //     console.log(val);
-            //   }
-            // };
-
-            // var testMethod = function(audio) {
-            //     var self = this;
-            //     var analyser;
-            //     var audioCtx = new (window.AudioContext || window.webkitAudioContext); // this is because it's not been standardised accross browsers yet.
-            //     analyser = audioCtx.createAnalyser();
-            //     analyser.fftSize = 256; // see - there is that 'fft' thing. 
-            //     var source = audioCtx.createMediaElementSource(audio); // this is where we hook up the <audio> element
-            //     source.connect(analyser);
-            //     analyser.connect(audioCtx.destination);
-            //     var sampleAudioStream = function() {
-            //         // This closure is where the magic happens. Because it gets called with setInterval below, it continuously samples the audio data
-            //         // and updates the streamData and volume properties. This the SoundCouldAudioSource function can be passed to a visualization routine and 
-            //         // continue to give real-time data on the audio stream.
-            //         analyser.getByteFrequencyData(self.streamData);
-            //         // calculate an overall volume value
-            //         var total = 0;
-            //         for (var i = 0; i < 80; i++) { // get the volume from the first 80 bins, else it gets too loud with treble
-            //             total += self.streamData[i];
-            //         }
-            //         self.volume = total;
-            //     };
-            //     setInterval(sampleAudioStream, 20); // 
-            //     // public properties and methods
-            //     this.volume = 0;
-            //     this.streamData = new Uint8Array(128); // This just means we will have 128 "bins" (always half the analyzer.fftsize value), each containing a number between 0 and 255. 
-            //     // this.playStream = function(streamUrl) {
-            //     //     // get the input stream from the audio element
-            //     //     player.setAttribute('src', streamUrl);
-            //     //     player.play();
-            //     // }
-            // };
-
-            // var audioSource = new testMethod(audio);
-            // var canvasElement = document.getElementById('canvas');
-            // var context = canvasElement.getContext("2d");
 
 
-            // var draw = function() {
-            //     // you can then access all the frequency and volume data
-            //     // and use it to draw whatever you like on your canvas
-            //     for(bin = 0; bin < audioSource.streamData.length; bin ++) {
+            var camera, scene, renderer;
+            var mobile = false;
+            var material,cubeShader
+            var cubes = []
+            var group
+            var object
+            var light
+            var verticesOriginal
 
-            //         // do something with each value. Here's a simple example
-            //         var val = audioSource.streamData[bin];
-            //         var red = val;
-            //         var green = 255 - val;
-            //         var blue = val / 2; 
-            //         context.fillStyle = 'rgb(' + red + ', ' + green + ', ' + blue + ')';
-            //         context.fillRect(bin * 2, 0, 2, 200);
-            //         // use lines and shapes to draw to the canvas is various ways. Use your imagination!
-            //     }
-            //     requestAnimationFrame(draw);
-            // };
+            var time = 0;
 
+            init();
+            setup();
+            render();
 
-            // draw();
+            function init() {
 
+                // renderer
 
+                renderer = new THREE.WebGLRenderer({antialias: true});
+                renderer.setPixelRatio(window.devicePixelRatio);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
 
-                var camera, scene, renderer;
-                var mobile = false;
-                var material,cubeShader
-                var cubes = []
-                var group
-                var object
-                var light
-                var verticesOriginal
+                // scene
 
-                var time = 0;
+                scene = new THREE.Scene();
 
-                init();
-                setup();
-                render();
+                // camera
 
-                function init() {
+                camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, .1, 1000);
+                camera.position.set(0, 0, 3);
+                camera.focalLength = camera.position.distanceTo(scene.position);
+                scene.add(camera)
 
-                    // renderer
+                // controls
 
-                    renderer = new THREE.WebGLRenderer({antialias: true});
-                    renderer.setPixelRatio(window.devicePixelRatio);
-                    renderer.setSize(window.innerWidth, window.innerHeight);
-                    document.body.appendChild(renderer.domElement);
+                controls = new THREE.OrbitControls(camera);
+                controls.autoRotate = true;
+                //controls.maxDistance=1
 
-                    // scene
+                if (WEBVR.isAvailable() === true) {
+                    controls = new THREE.VRControls(camera);
+                    controls.standing = false;
 
-                    scene = new THREE.Scene();
-
-                    // camera
-
-                    camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, .1, 1000);
-                    camera.position.set(0, 0, 3);
-                    camera.focalLength = camera.position.distanceTo(scene.position);
-                    scene.add(camera)
-
-                    // controls
-
-                    controls = new THREE.OrbitControls(camera);
-                    controls.autoRotate = true;
-                    //controls.maxDistance=1
-
-                    if (WEBVR.isAvailable() === true) {
-                        controls = new THREE.VRControls(camera);
-                        controls.standing = false;
-
-                        renderer = new THREE.VREffect(renderer);
-                        document.body.appendChild(WEBVR.getButton(renderer));
-                    }
-
-                    // events
-
-                    window.addEventListener('deviceorientation', setOrientationControls, true);
-                    window.addEventListener('resize', onWindowResize, false);
-                    window.addEventListener('click', click, false);
-
+                    renderer = new THREE.VREffect(renderer);
+                    document.body.appendChild(WEBVR.getButton(renderer));
                 }
 
-                function click() {
+                // events
 
-                    // change bg
+                window.addEventListener('deviceorientation', setOrientationControls, true);
+                window.addEventListener('resize', onWindowResize, false);
+                window.addEventListener('click', click, false);
 
-                    var cubeMap = getCubeMap(Math.floor(Math.random() * 10))
-                    cubeShader.uniforms['tCube'].value = cubeMap;
-                    material.envMap = cubeMap
+            }
 
-                    // animate cubes
+            function click() {
 
-                    var center = new THREE.Vector3();
-                    for (var i = 0; i < group.children.length; i++) {
-                        var newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
+                // change bg
 
-                        //console.log(newPosition.distanceTo(center))
-                        while (newPosition.distanceTo(center) < 2) {
-                            newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
-                        }
+                var cubeMap = getCubeMap(Math.floor(Math.random() * 10))
+                cubeShader.uniforms['tCube'].value = cubeMap;
+                material.envMap = cubeMap
 
-                        var c = group.children[i];
-                        /*c.position.x += Math.sin(time + i % 3) / 100
-                         c.position.y += Math.sin(time + i % 3 + 1) / 100
-                         c.position.z += Math.sin(time + i % 3 + 2) / 100*/
-                        TweenMax.to(c.position, 1, {
-                            delay: Math.random() * .3,
-                            x: newPosition.x,
-                            y: newPosition.y,
-                            z: newPosition.z,
-                            ease: Back.easeOut
-                        })
+                // animate cubes
+
+                var center = new THREE.Vector3();
+                for (var i = 0; i < group.children.length; i++) {
+                    var newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
+
+                    //console.log(newPosition.distanceTo(center))
+                    while (newPosition.distanceTo(center) < 2) {
+                        newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
                     }
-                }
 
-                function setup() {
-
-                    var cubeMap = getCubeMap(1)
-
-                    /*var texture = new THREE.TextureLoader().load("assets/textures/class.jpg");
-                     texture.wrapS = THREE.RepeatWrapping;
-                     texture.wrapT = THREE.RepeatWrapping;
-                     texture.repeat.set(1, 1);
-                     
-                     var geometry = new THREE.SphereGeometry(1,25,20);
-                     var material = new THREE.MeshBasicMaterial({map:texture, side:THREE.DoubleSide});
-                     
-                     var object = new THREE.Mesh(geometry, material);
-                     object.scale.x=-1;
-                     scene.add(object);*/
-
-
-                    // skybox
-
-                    cubeShader = THREE.ShaderLib['cube'];
-                    cubeShader.uniforms['tCube'].value = cubeMap;
-
-                    var skyBoxMaterial = new THREE.ShaderMaterial({
-                        fragmentShader: cubeShader.fragmentShader,
-                        vertexShader: cubeShader.vertexShader,
-                        uniforms: cubeShader.uniforms,
-                        depthWrite: false,
-                        side: THREE.BackSide
-                    });
-
-                    var skyBox = new THREE.Mesh(new THREE.SphereGeometry(100, 100, 100), skyBoxMaterial);
-
-                    scene.add(skyBox);
-
-                    // central object
-
-                    /*var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
-                     texture.wrapS = THREE.RepeatWrapping;
-                     texture.wrapT = THREE.RepeatWrapping;
-                     texture.repeat.set(1, 1);*/
-
-                    /*var geometry = new THREE.TorusGeometry(10 / 10, 3 / 10, 16, 100);
-                     var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
-                     object = new THREE.Mesh(geometry, material);
-                     scene.add(object);*/
-                    var geometry = new THREE.IcosahedronGeometry(1, 1);
-                    verticesOriginal = geometry.clone().vertices;
-                    material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false, side: THREE.BackSide});
-                    object = new THREE.Mesh(geometry, material);
-                    // object.scale.set(1,1,1);
-                    scene.add(object);
-
-                    // cubes
-
-                    group = new THREE.Object3D();
-                    var geo = new THREE.BoxGeometry(.2, .2, .2, 1, 1, 1)
-                    for (var _x = -3; _x <= 3; _x++) {
-                        for (var _y = -3; _y <= 3; _y++) {
-                            for (var _z = -2; _z <= 2; _z++) {
-                                var mesh = new THREE.Mesh(geo, material)
-                                mesh.position.set(_x, _y, _z)
-                                mesh.rotation.x = _x / 10
-                                mesh.rotation.y = 0
-                                mesh.rotation.z = _x / 10
-                                mesh.scale.x = 1
-                                mesh.scale.y = 1
-                                mesh.scale.z = 1
-                                group.add(mesh);
-                                cubes.push(mesh)
-                            }
-                        }
-                    }
-                    scene.add(group)
-
-                    // merge
-
-                    /*var geom = new THREE.Geometry()
-                     for (var i = 0; i < group.children.length; i++) {
-                     group.children[i].updateMatrix();
-                     geom.merge(group.children[i].geometry, group.children[i].matrix);
-                     }
-                     group = new THREE.Mesh(geom, material);
-                     scene.add(group)*/
-
-                    // light
-
-                    light = new THREE.DirectionalLight(0xffffff);
-                    light.position.set(-1, 1.5, 0.5);
-                    //var light = new THREE.PointLight(0xFFFFFF,1,10)
-                    //light.position.x=-1
-                    camera.add(light);
-
-                    //var ambient = new THREE.AmbientLight(0x666666)
-                    //scene.add(ambient)
-                }
-
-                function render() {
-                    requestAnimationFrame(render);
-
-                    controls.update();
-
-                    time += .01
-                    for (var i = 0; i < group.children.length; i++) {
-                     var c = group.children[i]
-                     c.position.x += Math.sin(time + i % 3) / 100
+                    var c = group.children[i];
+                    /*c.position.x += Math.sin(time + i % 3) / 100
                      c.position.y += Math.sin(time + i % 3 + 1) / 100
-                     c.position.z += Math.sin(time + i % 3 + 2) / 100
-                     }
-
-                    object.rotation.x += .01
-                    object.rotation.y += .01
-
-                    // var scale_x_original = object.scale.x;
-                    // var scale_y_original = object.scale.y;
-                    // var scale_z_original = object.scale.z;
-
-                    var sampleAudioStream = function() {
-                        analyser.getByteFrequencyData(dataArray);
-                        var total = 0;
-                        for(var i = 0; i < 80; i++) { //bufferLength
-                            total += dataArray[i]
-                        }
-                        total = total/5000
-                        // TweenMax.to(object.scale, 0.01, {x: total})
-                        // TweenMax.to(object.scale, 0.01, {y: total})
-                        // TweenMax.to(object.scale, 0.01, {z: total})
-                        object.scale.x = total;
-                        object.scale.y = total;
-                        object.scale.z = total;
-
-                        for (var i = 0; i < group.children.length; i++) {
-                             var c = group.children[i]
-                             c.scale.x = total/3
-                             c.scale.y = total/3
-                             c.scale.z = total/3
-
-                         }
-                        // console.log(total);
-                    }
-                    setInterval(sampleAudioStream, 17); 
-                    // var v = object.geometry.vertices
-                    // for(var i = 0; i < bufferLength; i++) {
-                    //     var val = dataArray[i];
-                    //     val = Math.sin(val);
-                        
-
-
-
-                    // if (Math.random() < .01) {
-                    //     var center = new THREE.Vector3();
-                    //     for (var i = 0; i < group.children.length; i++) {
-                    //         var newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
-
-                    //         //console.log(newPosition.distanceTo(center))
-                    //         while (newPosition.distanceTo(center) < 2) {
-                    //             newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
-                    //         }
-
-                    //         var c = group.children[i];
-                    //         /*c.position.x += Math.sin(time + i % 3) / 100
-                    //          c.position.y += Math.sin(time + i % 3 + 1) / 100
-                    //          c.position.z += Math.sin(time + i % 3 + 2) / 100*/
-                    //         TweenMax.to(c.position, 1, {
-                    //             delay: Math.random() * .3,
-                    //             x: newPosition.x,
-                    //             y: newPosition.y,
-                    //             z: newPosition.z,
-                    //             ease: Back.easeOut
-                    //         })
-                    //     }
-                    // }
-
-                    if (mobile) {
-                        camera.position.set(0, 0, 0)
-                        camera.translateZ(5);
-                    }
-                    renderer.render(scene, camera);
-
+                     c.position.z += Math.sin(time + i % 3 + 2) / 100*/
+                    TweenMax.to(c.position, 1, {
+                        delay: Math.random() * .3,
+                        x: newPosition.x,
+                        y: newPosition.y,
+                        z: newPosition.z,
+                        ease: Back.easeOut
+                    })
                 }
-}
+            }
+
+            function setup() {
+
+                var cubeMap = getCubeMap(1)
+
+                /*var texture = new THREE.TextureLoader().load("assets/textures/class.jpg");
+                 texture.wrapS = THREE.RepeatWrapping;
+                 texture.wrapT = THREE.RepeatWrapping;
+                 texture.repeat.set(1, 1);
+                 
+                 var geometry = new THREE.SphereGeometry(1,25,20);
+                 var material = new THREE.MeshBasicMaterial({map:texture, side:THREE.DoubleSide});
+                 
+                 var object = new THREE.Mesh(geometry, material);
+                 object.scale.x=-1;
+                 scene.add(object);*/
+
+
+                // skybox
+
+                cubeShader = THREE.ShaderLib['cube'];
+                cubeShader.uniforms['tCube'].value = cubeMap;
+
+                var skyBoxMaterial = new THREE.ShaderMaterial({
+                    fragmentShader: cubeShader.fragmentShader,
+                    vertexShader: cubeShader.vertexShader,
+                    uniforms: cubeShader.uniforms,
+                    depthWrite: false,
+                    side: THREE.BackSide
+                });
+
+                var skyBox = new THREE.Mesh(new THREE.SphereGeometry(100, 100, 100), skyBoxMaterial);
+
+                scene.add(skyBox);
+
+                // central object
+
+                /*var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
+                 texture.wrapS = THREE.RepeatWrapping;
+                 texture.wrapT = THREE.RepeatWrapping;
+                 texture.repeat.set(1, 1);*/
+
+                /*var geometry = new THREE.TorusGeometry(10 / 10, 3 / 10, 16, 100);
+                 var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
+                 object = new THREE.Mesh(geometry, material);
+                 scene.add(object);*/
+                var geometry = new THREE.IcosahedronGeometry(1, 1);
+                verticesOriginal = geometry.clone().vertices;
+                material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false, side: THREE.BackSide});
+                object = new THREE.Mesh(geometry, material);
+                // object.scale.set(1,1,1);
+                scene.add(object);
+
+                // cubes
+
+                group = new THREE.Object3D();
+                var geo = new THREE.BoxGeometry(.2, .2, .2, 1, 1, 1)
+                for (var _x = -3; _x <= 3; _x++) {
+                    for (var _y = -3; _y <= 3; _y++) {
+                        for (var _z = -2; _z <= 2; _z++) {
+                            var mesh = new THREE.Mesh(geo, material)
+                            mesh.position.set(_x, _y, _z)
+                            mesh.rotation.x = _x / 10
+                            mesh.rotation.y = 0
+                            mesh.rotation.z = _x / 10
+                            mesh.scale.x = 1
+                            mesh.scale.y = 1
+                            mesh.scale.z = 1
+                            group.add(mesh);
+                            cubes.push(mesh)
+                        }
+                    }
+                }
+                scene.add(group)
+
+                // merge
+
+                /*var geom = new THREE.Geometry()
+                 for (var i = 0; i < group.children.length; i++) {
+                 group.children[i].updateMatrix();
+                 geom.merge(group.children[i].geometry, group.children[i].matrix);
+                 }
+                 group = new THREE.Mesh(geom, material);
+                 scene.add(group)*/
+
+                // light
+
+                light = new THREE.DirectionalLight(0xffffff);
+                light.position.set(-1, 1.5, 0.5);
+                //var light = new THREE.PointLight(0xFFFFFF,1,10)
+                //light.position.x=-1
+                camera.add(light);
+
+                //var ambient = new THREE.AmbientLight(0x666666)
+                //scene.add(ambient)
+            }
+
+            function render() {
+                requestAnimationFrame(render);
+
+                controls.update();
+
+                time += .01
+                for (var i = 0; i < group.children.length; i++) {
+                 var c = group.children[i]
+                 c.position.x += Math.sin(time + i % 3) / 100
+                 c.position.y += Math.sin(time + i % 3 + 1) / 100
+                 c.position.z += Math.sin(time + i % 3 + 2) / 100
+                 }
+
+                object.rotation.x += .01
+                object.rotation.y += .01
+
+                // var scale_x_original = object.scale.x;
+                // var scale_y_original = object.scale.y;
+                // var scale_z_original = object.scale.z;
+
+                var sampleAudioStream = function() {
+                    analyser.getByteFrequencyData(dataArray);
+                    var total = 0;
+                    for(var i = 0; i < 80; i++) { //bufferLength
+                        total += dataArray[i]
+                    }
+                    total = total/5000
+                    // TweenMax.to(object.scale, 0.01, {x: total})
+                    // TweenMax.to(object.scale, 0.01, {y: total})
+                    // TweenMax.to(object.scale, 0.01, {z: total})
+                    object.scale.x = total;
+                    object.scale.y = total;
+                    object.scale.z = total;
+
+                    for (var i = 0; i < group.children.length; i++) {
+                         var c = group.children[i]
+                         c.scale.x = total/3
+                         c.scale.y = total/3
+                         c.scale.z = total/3
+
+                     }
+                    // console.log(total);
+                }
+                setInterval(sampleAudioStream, 17); 
+                // var v = object.geometry.vertices
+                // for(var i = 0; i < bufferLength; i++) {
+                //     var val = dataArray[i];
+                //     val = Math.sin(val);
+                    
+
+
+
+                // if (Math.random() < .01) {
+                //     var center = new THREE.Vector3();
+                //     for (var i = 0; i < group.children.length; i++) {
+                //         var newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
+
+                //         //console.log(newPosition.distanceTo(center))
+                //         while (newPosition.distanceTo(center) < 2) {
+                //             newPosition = new THREE.Vector3((Math.random() - .5) * 5, (Math.random() - .5) * 5, (Math.random() - .5) * 5)
+                //         }
+
+                //         var c = group.children[i];
+                //         /*c.position.x += Math.sin(time + i % 3) / 100
+                //          c.position.y += Math.sin(time + i % 3 + 1) / 100
+                //          c.position.z += Math.sin(time + i % 3 + 2) / 100*/
+                //         TweenMax.to(c.position, 1, {
+                //             delay: Math.random() * .3,
+                //             x: newPosition.x,
+                //             y: newPosition.y,
+                //             z: newPosition.z,
+                //             ease: Back.easeOut
+                //         })
+                //     }
+                // }
+
+                if (mobile) {
+                    camera.position.set(0, 0, 0)
+                    camera.translateZ(5);
+                }
+                renderer.render(scene, camera);
+
+            }
+        }
+        window.addEventListener('click', master, false);
+        window.addEventListener('touchend', master, false);
+
         </script>
     </body>
 </html>
