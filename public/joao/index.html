@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
-        <title>WebVR Workshop</title>
+        <title>VR Visualizations</title>
         <meta charset="utf-8">
         <meta property="og:title" content="WebVR Workshop"/>
         <meta property="og:type" content="website"/>
@@ -23,13 +23,15 @@
         </style>
     </head>
     <body style="font-family:Roboto Condensed; color: white;">
-    <div class="wrapper">
-        <p>Tap on the button to start music. Tap anywhere to change background.</p>
+    <div id="topBar" class="wrapper">
+        <p>Tap on the button to play music. Tap anywhere to change background.</p>
         <button class="button" onclick="playMusic()" style="align: center;">Music plz!</button>
     </div>
 
         <script src="js/third-party/threejs/three.js"></script>
         <script src="js/third-party/threejs/WebVR.js"></script>
+        <script src="js/third-party/threejs/Mirror.js"></script>
+        <script src="js/third-party/threejs/WaterShader.js"></script>
         <script src="js/third-party/threejs/effects/VREffect.js"></script>
         <script src="js/third-party/threejs/effects/StereoEffect.js"></script>
 
@@ -46,6 +48,18 @@
         var drawVisual;
         var audio;
         var source;
+        var background_counter = 2;
+        var waterNormals;
+        var musicPlaying = false;
+        var parameters = {
+            width: 2000,
+            height: 2000,
+            widthSegments: 250,
+            heightSegments: 250,
+            depth: 1500,
+            param: 4,
+            filterparam: 1
+        };
 
         audio = new Audio();
         audio.src = 'http://api.soundcloud.com/tracks/273278810/stream?client_id=17a992358db64d99e492326797fff3e8';
@@ -56,8 +70,19 @@
         // audio.autoplay = true;
         audio.crossOrigin = "anonymous";
 
+
         function playMusic() {
-            audio.play();
+            console.log("attempting to play music")
+
+            if (musicPlaying == false) {
+                console.log("playing music");
+                var x = document.getElementById("topBar")
+                x.style.display = 'none';
+                audio.play();
+                musicPlaying = true;
+            } else {
+                console.log("Already playing")
+            }
         }
 
         var audioCtx = new (window.AudioContext || window.webkitAudioContext); // this is because it's not been standardised accross browsers yet.
@@ -134,7 +159,15 @@
 
             // change bg
 
-            var cubeMap = getCubeMap(Math.floor(Math.random() * 10))
+            var cubeMap = getCubeMap(background_counter)
+            
+            if (background_counter <= 9) {
+                background_counter += 1
+            }
+            else {
+                background_counter = 1
+            }
+
             cubeShader.uniforms['tCube'].value = cubeMap;
             material.envMap = cubeMap
 
@@ -249,7 +282,7 @@
 
             // light
 
-            light = new THREE.DirectionalLight(0xffffff);
+            light = new THREE.AmbientLight( 0xffffcc )
             light.position.set(-1, 1.5, 0.5);
             //var light = new THREE.PointLight(0xFFFFFF,1,10)
             //light.position.x=-1
@@ -257,6 +290,32 @@
 
             //var ambient = new THREE.AmbientLight(0x666666)
             //scene.add(ambient)
+
+            // waterNormals = new THREE.TextureLoader().load( 'assets/textures/waternormals.jpg' );
+            // waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+
+            // water = new THREE.Water( renderer, camera, scene, {
+            //     textureWidth: 512,
+            //     textureHeight: 512,
+            //     waterNormals: waterNormals,
+            //     alpha:  1.0,
+            //     sunDirection: light.position.clone().normalize(),
+            //     sunColor: 0xffffff,
+            //     waterColor: 0x001e0f,
+            //     distortionScale: 50.0,
+            // } );
+
+
+            // mirrorMesh = new THREE.Mesh(
+            //     new THREE.PlaneBufferGeometry( parameters.width * 500, parameters.height * 500 ),
+            //     water.material
+            // );
+
+            // mirrorMesh.position.set(0,-100,0)
+
+            // mirrorMesh.add( water );
+            // mirrorMesh.rotation.x = - Math.PI * 0.5;
+            // scene.add( mirrorMesh );
         }
 
         function render() {
@@ -265,6 +324,7 @@
             controls.update();
 
             time += .01
+
             for (var i = 0; i < group.children.length; i++) {
              var c = group.children[i]
              c.position.x += Math.sin(time + i % 3) / 100
@@ -291,6 +351,7 @@
                 else {
                     total = 0.1
                 }
+
                 // TweenMax.to(object.scale, 0.01, {x: total})
                 // TweenMax.to(object.scale, 0.01, {y: total})
                 // TweenMax.to(object.scale, 0.01, {z: total})
