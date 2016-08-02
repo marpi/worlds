@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700' rel='stylesheet' type='text/css'>
         <title>WebVR Workshop</title>
         <meta charset="utf-8">
         <meta property="og:title" content="WebVR Workshop"/>
@@ -13,9 +14,20 @@
                 overflow: hidden;
                 background-color: #000;
             }
+            .button {
+                margin:auto;
+            }
+            .wrapper {
+                text-align: center;
+            }
         </style>
     </head>
-    <body>
+    <body style="font-family:Roboto Condensed; color: white;">
+    <div class="wrapper">
+        <p>Please click on the button below to start music, click anywhere to change background.</p>
+        <button class="button" onclick="playMusic()" style="align: center;">Start!</button>
+    </div>
+
         <script src="js/third-party/threejs/three.js"></script>
         <script src="js/third-party/threejs/WebVR.js"></script>
         <script src="js/third-party/threejs/effects/VREffect.js"></script>
@@ -41,8 +53,12 @@
         // 204082098
         // 195692475
         audio.controls = true;
-        audio.autoplay = true;
+        // audio.autoplay = true;
         audio.crossOrigin = "anonymous";
+
+        function playMusic() {
+            audio.play();
+        }
 
         var audioCtx = new (window.AudioContext || window.webkitAudioContext); // this is because it's not been standardised accross browsers yet.
         analyser = audioCtx.createAnalyser();
@@ -269,7 +285,12 @@
                 for(var i = 0; i < 80; i++) { //bufferLength
                     total += dataArray[i]
                 }
-                total = total/5000
+                if (total > 0) {
+                    total = total/5000
+                }
+                else {
+                    total = 0.1
+                }
                 // TweenMax.to(object.scale, 0.01, {x: total})
                 // TweenMax.to(object.scale, 0.01, {y: total})
                 // TweenMax.to(object.scale, 0.01, {z: total})
