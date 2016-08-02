@@ -60,6 +60,7 @@
             param: 4,
             filterparam: 1
         };
+        var valueHistory = []
 
         audio = new Audio();
         audio.src = 'http://api.soundcloud.com/tracks/273278810/stream?client_id=17a992358db64d99e492326797fff3e8';
@@ -70,6 +71,9 @@
         // audio.autoplay = true;
         audio.crossOrigin = "anonymous";
 
+        function getMaxOfArray(numArray) {
+            return Math.max.apply(null, numArray);
+        }
 
         function playMusic() {
             console.log("attempting to play music")
@@ -85,6 +89,7 @@
             }
         }
 
+
         var audioCtx = new (window.AudioContext || window.webkitAudioContext); // this is because it's not been standardised accross browsers yet.
         analyser = audioCtx.createAnalyser();
         analyser.fftSize = 256; // see - there is that 'fft' thing. 
@@ -95,8 +100,6 @@
         var bufferLength = analyser.frequencyBinCount;
         // console.log(bufferLength);
         var dataArray = new Uint8Array(bufferLength);
-
-
 
         var camera, scene, renderer;
         var mobile = false;
@@ -129,7 +132,7 @@
             // camera
 
             camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, .1, 1000);
-            camera.position.set(0, 0, 3);
+            camera.position.set(0, 0, 5);
             camera.focalLength = camera.position.distanceTo(scene.position);
             scene.add(camera)
 
@@ -155,10 +158,7 @@
 
         }
 
-        function click() {
-
-            // change bg
-
+        function changeBackground(){
             var cubeMap = getCubeMap(background_counter)
             
             if (background_counter <= 9) {
@@ -170,6 +170,12 @@
 
             cubeShader.uniforms['tCube'].value = cubeMap;
             material.envMap = cubeMap
+        }
+        function click() {
+            //console.log(getMaxOfArray(valueHistory));
+            // change bg
+
+            changeBackground();
 
             // animate cubes
 
@@ -323,14 +329,24 @@
 
             controls.update();
 
-            time += .01
+            time += 0.01;
+            // console.log(time);
+
+            // if (Math.floor(time) % 300 == 0){
+            //     console.log("Match!")
+            //     var x = Math.random()*5;
+            //     var y = Math.random()*5;
+            //     camera.position.set(x,y,5);
+            // } else {
+            //     return
+            // }
 
             for (var i = 0; i < group.children.length; i++) {
-             var c = group.children[i]
-             c.position.x += Math.sin(time + i % 3) / 100
-             c.position.y += Math.sin(time + i % 3 + 1) / 100
-             c.position.z += Math.sin(time + i % 3 + 2) / 100
-             }
+                 var c = group.children[i]
+                 c.position.x += Math.sin(time + i % 3) / 100
+                 c.position.y += Math.sin(time + i % 3 + 1) / 100
+                 c.position.z += Math.sin(time + i % 3 + 2) / 100
+            }
 
             object.rotation.x += .01
             object.rotation.y += .01
@@ -347,6 +363,8 @@
                 }
                 if (total > 0) {
                     total = total/5000
+                    // console.log(total)
+                    // valueHistory.push(total);
                 }
                 else {
                     total = 0.1
@@ -366,9 +384,15 @@
                      c.scale.z = total/3
 
                  }
+
+                 if (total > 3.5) {
+                    changeBackground();
+                 }
                 // console.log(total);
             }
             setInterval(sampleAudioStream, 17); 
+            // console.log(valueHistory)
+            // console.log(Math.max(valueHistory));
             // var v = object.geometry.vertices
             // for(var i = 0; i < bufferLength; i++) {
             //     var val = dataArray[i];
