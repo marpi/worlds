@@ -24,13 +24,25 @@
     </head>
     <body style="font-family:Roboto Condensed; color: white;">
     <div id="topBar" class="wrapper">
-        <p>Tap on the button to play music. Tap anywhere to change background.</p>
+        <p>Enter a SoundCloud below or just tap on the button to play music. Tap anywhere to change background.</p>
+        <input id="url_form" type="text" name="soundCloudLink" placeholder="Enter SoundCloud Track URL" autofocus>
         <button class="button" onclick="playMusic()" style="align: center;">Music plz!</button>
     </div>
 
         <script src="js/third-party/threejs/three.js"></script>
         <script src="js/third-party/threejs/WebVR.js"></script>
         <script src="js/third-party/threejs/Mirror.js"></script>
+        <script src="js/third-party/RGBShiftShader.js"></script>
+        <script src="js/third-party/EffectComposer.js"></script>
+        <script src="js/third-party/MirrorShader.js"></script>
+        <script src="js/third-party/HorizontalBlurShader.js"></script>
+        <script src="js/third-party/DotScreenPass.js"></script>
+        <script src="js/third-party/DotScreenShader.js"></script>
+        <script src="js/third-party/CopyShader.js"></script>
+        <script src="js/third-party/RenderPass.js"></script>
+        <script src="js/third-party/MaskPass.js"></script>
+        <script src="js/third-party/ShaderPass.js"></script>
+
         <script src="js/third-party/threejs/WaterShader.js"></script>
         <script src="js/third-party/threejs/effects/VREffect.js"></script>
         <script src="js/third-party/threejs/effects/StereoEffect.js"></script>
@@ -42,6 +54,12 @@
         <script src="js/third-party/TweenMax.min.js"></script>
 
         <script src="js/utils/helpers.js"></script>
+        <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
+        <script>
+          SC.initialize({
+            client_id: '17a992358db64d99e492326797fff3e8'
+          });
+        </script>
 
         <script>
 
@@ -61,24 +79,60 @@
             filterparam: 1
         };
         var valueHistory = []
+        var composer;
+        var rgbEffect;
+        var mirrorPass, hblurPass;
+        var soundCloudTrackLink;
+        var audio;
+        var sc_json;
+        var first_time = true;
 
         audio = new Audio();
-        audio.src = 'http://api.soundcloud.com/tracks/273278810/stream?client_id=17a992358db64d99e492326797fff3e8';
-        // 273278810
-        // 204082098
-        // 195692475
-        audio.controls = true;
-        // audio.autoplay = true;
-        audio.crossOrigin = "anonymous";
+        // var track_url = 'https://soundcloud.com/ghostly/shigeto-need-nobody';
 
-        function getMaxOfArray(numArray) {
-            return Math.max.apply(null, numArray);
-        }
+        // var test = SC.resolve(track_url);
 
+
+        // console.log(test)
+
+        // var val = "https://soundcloud.com/ghostly/shigeto-need-nobody";
+
+        // sc_json = SC.resolve(val);
+        // console.log("starting logging")
+
+        // var test = SC.get('/resolve', { url: track_url }, function(sound) {
+        //         console.log(sound.stream_url)
+        //         return sound.stream_url
+        //     });
+
+        // console.log(test.request)
+
+
+        // var obj = SC.get('/resolve/?url=https://soundcloud.com/ghostly/shigeto-need-nobody');
+        //var hey = JSON.parse(obj.request.response)
+        // console.log(obj)
+        //console.log(hey["stream_url"])
         function playMusic() {
             console.log("attempting to play music")
+            var val = document.getElementById("url_form").value;
 
             if (musicPlaying == false) {
+                if (val == "") {
+                    audio.src = 'http://api.soundcloud.com/tracks/273278810/stream?client_id=17a992358db64d99e492326797fff3e8';
+                } else {
+                    console.log("resolving:" + val)
+
+                    SC.resolve(val).then(function(track) {
+                        audio.src = track.stream_url + '?client_id=17a992358db64d99e492326797fff3e8'
+                    })
+
+                    // console.log(sc_json["_result"]["stream_url"])
+
+                    // var audio_track = sc_json._result.stream_url;
+                }
+                audio.controls = true;
+                // audio.autoplay = true;
+                audio.crossOrigin = "anonymous";
                 console.log("playing music");
                 var x = document.getElementById("topBar")
                 x.style.display = 'none';
@@ -149,24 +203,69 @@
                 renderer = new THREE.VREffect(renderer);
                 document.body.appendChild(WEBVR.getButton(renderer));
             }
+            // POST PROCESSING
+            composer = new THREE.EffectComposer( renderer );
+            var renderPass = new THREE.RenderPass( scene, camera );
+            //var dotScreenPass = new THREE.DotScreenPass( new THREE.Vector2( 0, 0 ), 0.5, 0.8 );
+
+
+            composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+            rgbEffect = new THREE.ShaderPass( THREE.RGBShiftShader );
+
+            rgbEffect.uniforms[ 'amount' ].value = 0.005;
+
+            rgbEffect.renderToScreen = true;
+
+            mirrorPass = new THREE.ShaderPass( THREE.MirrorShader );
+            hblurPass = new THREE.ShaderPass( THREE.HorizontalBlurShader );
+            hblurPass.uniforms[ 'h' ].value =  1.0 / (512.0*2) ;
+
+            composer.addPass( renderPass );
+            composer.addPass( hblurPass );
+            //composer.addPass( dotScreenPass );
+            composer.addPass( mirrorPass );
+            composer.addPass( rgbEffect );
+
+
 
             // events
 
             window.addEventListener('deviceorientation', setOrientationControls, true);
             window.addEventListener('resize', onWindowResize, false);
             window.addEventListener('click', click, false);
+            // if (musicPlaying == true) {
+            //     window.addEventListener('click', click, false);
+            //     console.log("event listener for click")
+            // } else {
+            //     return;
+            // }
 
         }
 
         function changeBackground(){
+
+            mirrorPass.uniforms[ "side" ].value = Math.floor(Math.random()*4);
+
             var cubeMap = getCubeMap(background_counter)
-            
             if (background_counter <= 9) {
                 background_counter += 1
             }
             else {
                 background_counter = 1
             }
+            
+            // if (first_time != true) {
+            //     first_time != false;
+            //     if (background_counter <= 9) {
+            //         background_counter += 1
+            //     }
+            //     else {
+            //         background_counter = 1
+            //     }
+            // } else {
+            //     return
+            // }
 
             cubeShader.uniforms['tCube'].value = cubeMap;
             material.envMap = cubeMap
@@ -218,6 +317,25 @@
              object.scale.x=-1;
              scene.add(object);*/
 
+                //SUN BEAMS
+            BEAM_COUNT = 6;
+            var i;
+            var beamGeometry = new THREE.PlaneGeometry(5000, 50, 1, 1);
+            beamGroup = new THREE.Object3D();
+            beamMaterial = new THREE.MeshBasicMaterial({
+                opacity: 0.3,
+                transparent: true
+            });
+
+            for (i = 0; i < BEAM_COUNT; ++i) {
+                beam = new THREE.Mesh(beamGeometry, beamMaterial);
+                beam.doubleSided = true;
+                beam.rotation.x = Math.random() * Math.PI;
+                beam.rotation.y = Math.random() * Math.PI;
+                beam.rotation.z = Math.random() * Math.PI;
+                beamGroup.add(beam);
+            }
+            scene.add(beamGroup);
 
             // skybox
 
@@ -385,8 +503,8 @@
 
                  }
 
-                 if (total > 3.5) {
-                    changeBackground();
+                 if (total > 2) {
+                    rgbEffect.uniforms[ 'amount' ].value = (Math.random()/60)+0.005;
                  }
                 // console.log(total);
             }
@@ -429,8 +547,8 @@
                 camera.position.set(0, 0, 0)
                 camera.translateZ(1);
             }
-            renderer.render(scene, camera);
-
+            //renderer.render(scene, camera);
+            composer.render(0.1);
         }
 
         </script>

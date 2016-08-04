@@ -1,0 +1,49 @@
+<html>
+    <script src="https://connect.soundcloud.com/sdk/sdk-3.1.2.js"></script>
+    <script>
+
+	    SC.initialize({
+	        client_id: '17a992358db64d99e492326797fff3e8'
+	     });
+    	console.log("hey")
+	    var track_url = "https://soundcloud.com/anenon/prune";
+
+	    // var track_url = 'http://soundcloud.com/forss/voca-nomen-tuum';
+
+		var tracks = [];
+
+		var track_stream = "";
+
+		function getData () {
+			var track_stream = ""
+			track_stream = SC.resolve(track_url).then(function(track) {
+				tracks.push(track.stream_url);
+				console.log(track)
+				console.log(tracks)
+				return track.stream_url
+			})
+			console.log(track_stream)
+			return track_stream
+		}
+		var data = getData();
+		console.log(data)
+
+		// var lol = SC.resolve(track_url).then(getData);
+		// console.log(lol);
+		// console.log(lol._result);
+
+    	// sc_json = SC.resolve(val);
+    	// console.log(val);
+    	// console.log(sc_json._result);
+
+
+    	// console.log(sc_json.responseText)
+    	// console.log(sc_json["request"]);
+
+    	// var myvar = sc_json["request"];
+
+    	// console.log(myvar.responseText);
+
+
+    </script>
+</html>
