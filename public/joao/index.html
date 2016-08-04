@@ -88,6 +88,12 @@
         var first_time = true;
 
         audio = new Audio();
+
+        // events
+
+        window.addEventListener('deviceorientation', setOrientationControls, true);
+        window.addEventListener('resize', onWindowResize, false);
+        window.addEventListener('click', click, false);
         // var track_url = 'https://soundcloud.com/ghostly/shigeto-need-nobody';
 
         // var test = SC.resolve(track_url);
@@ -118,11 +124,12 @@
 
             if (musicPlaying == false) {
                 if (val == "") {
-                    audio.src = 'http://api.soundcloud.com/tracks/273278810/stream?client_id=17a992358db64d99e492326797fff3e8';
+                    audio.src = 'http://api.soundcloud.com/tracks/230644776/stream?client_id=17a992358db64d99e492326797fff3e8';
                 } else {
                     console.log("resolving:" + val)
 
                     SC.resolve(val).then(function(track) {
+                        console.log(track.stream_url)
                         audio.src = track.stream_url + '?client_id=17a992358db64d99e492326797fff3e8'
                     })
 
@@ -219,7 +226,7 @@
 
             mirrorPass = new THREE.ShaderPass( THREE.MirrorShader );
             hblurPass = new THREE.ShaderPass( THREE.HorizontalBlurShader );
-            hblurPass.uniforms[ 'h' ].value =  1.0 / (512.0*2) ;
+            hblurPass.uniforms[ 'h' ].value =  1.0 / (512.0*3) ;
 
             composer.addPass( renderPass );
             composer.addPass( hblurPass );
@@ -229,11 +236,7 @@
 
 
 
-            // events
 
-            window.addEventListener('deviceorientation', setOrientationControls, true);
-            window.addEventListener('resize', onWindowResize, false);
-            window.addEventListener('click', click, false);
             // if (musicPlaying == true) {
             //     window.addEventListener('click', click, false);
             //     console.log("event listener for click")
@@ -254,7 +257,7 @@
             else {
                 background_counter = 1
             }
-            
+
             // if (first_time != true) {
             //     first_time != false;
             //     if (background_counter <= 9) {
@@ -323,7 +326,7 @@
             var beamGeometry = new THREE.PlaneGeometry(5000, 50, 1, 1);
             beamGroup = new THREE.Object3D();
             beamMaterial = new THREE.MeshBasicMaterial({
-                opacity: 0.3,
+                opacity: 0.2,
                 transparent: true
             });
 
