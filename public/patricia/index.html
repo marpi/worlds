@@ -1,148 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Hello World</title>
-        <meta charset="utf-8">
-        <meta property="og:title" content="WebVR"/>
-        <meta property="og:type" content="website"/>
-        <meta property="og:image" content="https://worlds.marpi.pl/assets/image.jpg"/>
-        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-        <style>
-            body {
-                margin: 0px;
-                overflow: hidden;
-                background-color: #000;
-            }
-        </style>
-    </head>
-    <body>
+	<head>
+		<title>three.js webgl - particles</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
+				font-family:Monospace;
+				font-size:13px;
+				text-align:center;
+				font-weight: bold;
+				text-align:center;
+			}
+			a {
+				color:#0078ff;
+			}
+			#info {
+				color: #fff;
+				position: absolute;
+				top: 0px; width: 100%;
+				padding: 5px;
+				z-index: 100;
+			}
+		</style>
+	</head>
+	<body>
 
-        <script src="js/third-party/threejs/three.js"></script>
-        <script src="js/third-party/threejs/WebVR.js"></script>
-        <script src="js/third-party/threejs/effects/VREffect.js"></script>
-        <script src="js/third-party/threejs/effects/StereoEffect.js"></script>
+		<div id="info">
+			<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> - webgl particles example
+		</div>
 
-        <script src="js/third-party/threejs/controls/VRControls.js"></script>
-        <script src="js/third-party/threejs/controls/DeviceOrientationControls.js"></script>
-        <script src="js/third-party/threejs/controls/OrbitControls.js"></script>
+		<script src="../build/three.js"></script>
 
-        <script src="js/third-party/TweenMax.min.js"></script>
+		<script src="js/Detector.js"></script>
+		<script src="js/libs/stats.min.js"></script>
 
-        <script src="js/utils/helpers.js"></script>
-
-        <script>
-            var camera, scene, renderer;
-            var mobile = false;
-            var group;
-            init();
-            setup();
-            render();
-            function init() {
-                // renderer
-                renderer = new THREE.WebGLRenderer({antialias: true});
-                renderer.setPixelRatio(window.devicePixelRatio);
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                document.body.appendChild(renderer.domElement);
-                // scene
-                scene = new THREE.Scene();
-                // camera
-                camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, .1, 1000);
-                camera.position.set(0, 0, 5.001);
-                camera.focalLength = camera.position.distanceTo(scene.position);
-                scene.add(camera)
-                // controls
-                controls = new THREE.OrbitControls(camera);
-                controls.autoRotate = true;
-                controls.maxDistance=10
-                if (WEBVR.isAvailable() === true) {
-                    controls = new THREE.VRControls(camera);
-                    controls.standing = false;
-                    renderer = new THREE.VREffect(renderer);
-                    document.body.appendChild(WEBVR.getButton(renderer));
-                }
-                // events
-                window.addEventListener('deviceorientation', setOrientationControls, true);
-                window.addEventListener('resize', onWindowResize, false);
-            }
-            function setup() {
-                var cubeMap = getCubeMap(6)
-                
-                var texture = new THREE.TextureLoader().load("assets/textures/class.jpg");
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
-                texture.repeat.set(1, 1);
-                
-                var geometry = new THREE.SphereGeometry(4,25,20);
-                var material = new THREE.MeshBasicMaterial({map:texture, side:THREE.BackSide});
-                var object = new THREE.Mesh(geometry, material);
-                scene.add(object);
-                
-                // skybox
-                /*var cubeShader = THREE.ShaderLib['cube'];
-                cubeShader.uniforms['tCube'].value = cubeMap;
-                var skyBoxMaterial = new THREE.ShaderMaterial({
-                    fragmentShader: cubeShader.fragmentShader,
-                    vertexShader: cubeShader.vertexShader,
-                    uniforms: cubeShader.uniforms,
-                    depthWrite: false,
-                    side: THREE.BackSide
-                });
-                var skyBox = new THREE.Mesh(new THREE.SphereGeometry(100, 100, 100), skyBoxMaterial);
-                scene.add(skyBox);*/
-                // central object
-                var texture = new THREE.TextureLoader().load("assets/textures/world.jpg");
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
-                texture.repeat.set(1, 1);
-                var geometry = new THREE.SphereGeometry(1.84, 0.55, 25, 6);
-                var material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: cubeMap, wireframe: false});
-                var object = new THREE.Mesh(geometry, material);
-                // scene.add(object);
-                // cubes
-                group = new THREE.Object3D();
-                for (var _x = -4; _x <= 4; _x++) {
-                    for (var _y = -4; _y <= 4; _y++) {
-                        for (var _z = -4; _z <= 4; _z++) {
-                            var geo = new THREE.BoxGeometry(.1, .1, .1, 1, 1, 1)
-                            var mesh = new THREE.Mesh(geo, material)
-                            mesh.position.set(_x, _y, _z)
-                            mesh.rotation.x = _x / 10
-                            mesh.rotation.y = 0
-                            mesh.rotation.z = _x / 10
-                            mesh.scale.x = 1
-                            mesh.scale.y = 4
-                            mesh.scale.z = 1
-                            group.add(mesh);
-                        }
-                    }
-                }
-                // merge
-                var geom = new THREE.Geometry()
-                for (var i = 0; i < group.children.length; i++) {
-                    group.children[i].updateMatrix();
-                    geom.merge(group.children[i].geometry, group.children[i].matrix);
-                }
-                var cubeMaterial = new THREE.MeshPhongMaterial({shading: THREE.FlatShading, envMap: texture, wireframe: false});
-                group = new THREE.Mesh(geom, material);
-                scene.add(group)
-                // light
-                var light = new THREE.DirectionalLight(0xffffff);
-                light.position.set(-1, 1.5, 0.5);
-                //var light = new THREE.PointLight(0xFFFFFF,1,10)
-                //light.position.x=-1
-                scene.add(light);
-                //var ambient = new THREE.AmbientLight(0x666666)
-                //scene.add(ambient)
-            }
-            function render() {
-                requestAnimationFrame(render);
-                controls.update();
-                if (mobile) {
-                    camera.position.set(0, 0, 0)
-                    camera.translateZ(0.001);
-                }
-                renderer.render(scene, camera);
-            }
-        </script>
-    </body>
+		<script>
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+			var container, stats;
+			var camera, scene, renderer, particles, geometry, materials = [], parameters, i, h, color, size;
+			var mouseX = 0, mouseY = 0;
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+			init();
+			animate();
+			function init() {
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 3000 );
+				camera.position.z = 1000;
+				scene = new THREE.Scene();
+				scene.fog = new THREE.FogExp2( 0x000000, 0.0007 );
+				geometry = new THREE.Geometry();
+				for ( i = 0; i < 20000; i ++ ) {
+					var vertex = new THREE.Vector3();
+					vertex.x = Math.random() * 2000 - 1000;
+					vertex.y = Math.random() * 2000 - 1000;
+					vertex.z = Math.random() * 2000 - 1000;
+					geometry.vertices.push( vertex );
+				}
+				parameters = [
+					[ [1, 1, 0.5], 5 ],
+					[ [0.95, 1, 0.5], 4 ],
+					[ [0.90, 1, 0.5], 3 ],
+					[ [0.85, 1, 0.5], 2 ],
+					[ [0.80, 1, 0.5], 1 ]
+				];
+				for ( i = 0; i < parameters.length; i ++ ) {
+					color = parameters[i][0];
+					size  = parameters[i][1];
+					materials[i] = new THREE.PointsMaterial( { size: size } );
+					particles = new THREE.Points( geometry, materials[i] );
+					particles.rotation.x = Math.random() * 6;
+					particles.rotation.y = Math.random() * 6;
+					particles.rotation.z = Math.random() * 6;
+					scene.add( particles );
+				}
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+				stats = new Stats();
+				container.appendChild( stats.dom );
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+				document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+				document.addEventListener( 'touchmove', onDocumentTouchMove, false );
+				//
+				window.addEventListener( 'resize', onWindowResize, false );
+			}
+			function onWindowResize() {
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+			function onDocumentMouseMove( event ) {
+				mouseX = event.clientX - windowHalfX;
+				mouseY = event.clientY - windowHalfY;
+			}
+			function onDocumentTouchStart( event ) {
+				if ( event.touches.length === 1 ) {
+					event.preventDefault();
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+				}
+			}
+			function onDocumentTouchMove( event ) {
+				if ( event.touches.length === 1 ) {
+					event.preventDefault();
+					mouseX = event.touches[ 0 ].pageX - windowHalfX;
+					mouseY = event.touches[ 0 ].pageY - windowHalfY;
+				}
+			}
+			//
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+				stats.update();
+			}
+			function render() {
+				var time = Date.now() * 0.00005;
+				camera.position.x += ( mouseX - camera.position.x ) * 0.05;
+				camera.position.y += ( - mouseY - camera.position.y ) * 0.05;
+				camera.lookAt( scene.position );
+				for ( i = 0; i < scene.children.length; i ++ ) {
+					var object = scene.children[ i ];
+					if ( object instanceof THREE.Points ) {
+						object.rotation.y = time * ( i < 4 ? i + 1 : - ( i + 1 ) );
+					}
+				}
+				for ( i = 0; i < materials.length; i ++ ) {
+					color = parameters[i][0];
+					h = ( 360 * ( color[0] + time ) % 360 ) / 360;
+					materials[i].color.setHSL( h, color[1], color[2] );
+				}
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
 </html>
